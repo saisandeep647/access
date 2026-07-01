@@ -18,69 +18,13 @@
             overflow-x: hidden;
         }
 
-        h1 {
-            margin-top: 30px;
-            font-size: 2.5em;
-            letter-spacing: 2px;
-        }
-
-        .top-section {
-            display: flex;
-            gap: 15px;
-            width: 90%;
-            max-width: 1000px;
-            margin-top: 20px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .search-box {
-            display: flex;
-            gap: 10px;
-            flex: 1;
-            min-width: 300px;
-        }
-
-        .search-input {
-            flex: 1;
-            padding: 12px 15px;
-            font-size: 1em;
-            border: 2px solid #333;
-            border-radius: 8px;
-            background: #1a1a1a;
-            color: #fff;
-            outline: none;
-            transition: border-color 0.3s;
-        }
-
-        .search-input:focus {
-            border-color: #ffb81c;
-        }
-
-        .search-btn {
-            padding: 12px 25px;
-            font-size: 1em;
-            background: #ffb81c;
-            color: #000;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s;
-        }
-
-        .search-btn:hover, .search-btn:focus {
-            background: #fff;
-            transform: scale(1.05);
-        }
-
         .container {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 20px;
             width: 90%;
             max-width: 1000px;
-            margin-top: 30px;
+            margin-top: 50px;
         }
 
         .card {
@@ -88,311 +32,57 @@
             padding: 40px;
             text-align: center;
             border-radius: 15px;
-            text-decoration: none;
             color: #fff;
             border: 2px solid #333;
             transition: 0.2s;
             cursor: pointer;
             font-weight: bold;
             display: block;
+            text-decoration: none;
         }
 
         .card:focus, .card:hover {
-            background: #ffb81c;
+            background: #fff;
             color: #000;
             outline: none;
             transform: scale(1.05);
-            border-color: #ffb81c;
-        }
-
-        /* Video Player Section */
-        #video-section {
-            width: 90%;
-            max-width: 800px;
-            margin-top: 50px;
-            margin-bottom: 50px;
-        }
-
-        #video-section h2 {
-            text-align: center;
-            margin-bottom: 20px;
-            font-size: 1.5em;
-        }
-
-        video {
-            width: 100%;
-            border-radius: 10px;
-            background: #000;
-            border: 2px solid #333;
-        }
-
-        /* Web Viewer Section */
-        .web-viewer {
-            display: none;
-            width: 100%;
-            height: 100vh;
-            position: fixed;
-            top: 0;
-            left: 0;
-            flex-direction: column;
-            background: #000;
-            z-index: 1000;
-        }
-
-        .web-viewer.active {
-            display: flex;
-        }
-
-        .viewer-header {
-            background: #0a0a0a;
-            padding: 15px 30px;
-            border-bottom: 2px solid #ffb81c;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .viewer-title {
-            font-size: 1.3em;
-            font-weight: bold;
-            color: #ffb81c;
-        }
-
-        .close-viewer-btn {
-            padding: 10px 20px;
-            background: #ff6b6b;
-            color: #fff;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s;
-        }
-
-        .close-viewer-btn:hover, .close-viewer-btn:focus {
-            background: #ff8787;
-            transform: scale(1.05);
-        }
-
-        .viewer-content {
-            flex: 1;
-            overflow: auto;
-            background: #fff;
-        }
-
-        iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-
-        /* Status Message */
-        .status {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 15px 25px;
-            background: #1a1a1a;
-            border: 2px solid #ffb81c;
-            border-radius: 10px;
-            color: #fff;
-            display: none;
-            z-index: 2000;
-            font-weight: bold;
-        }
-
-        .status.show {
-            display: block;
-            animation: fadeInOut 3s ease-in-out;
-        }
-
-        @keyframes fadeInOut {
-            0%, 100% { opacity: 0; }
-            50% { opacity: 1; }
-        }
-
-        /* Navigation Info */
-        .nav-info {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            padding: 15px 20px;
-            background: rgba(0, 0, 0, 0.8);
-            border: 1px solid #333;
-            border-radius: 8px;
-            font-size: 0.9em;
-            color: #aaa;
         }
     </style>
 </head>
-<body oncontextmenu="return false;">
+<body>
 
-    <h1>📺 Dashboard</h1>
+    <h1>Dashboard</h1>
 
-    <div class="top-section">
-        <div class="search-box">
-            <input type="text" id="urlInput" class="search-input" placeholder="Enter website URL or name..." />
-            <button class="search-btn" onclick="searchAndLoadWebsite()">🔍 Search</button>
-        </div>
-    </div>
-
-    <div class="container" id="cardContainer">
-        <button class="card" onclick="loadWebsite('https://www.google.com', 'Google')">🔍 Google</button>
-        <button class="card" onclick="loadWebsite('https://www.wikipedia.org', 'Wikipedia')">📚 Wikipedia</button>
-        <button class="card" onclick="loadWebsite('https://www.youtube.com', 'YouTube')">▶️ YouTube</button>
-        <button class="card" onclick="loadWebsite('https://www.github.com', 'GitHub')">🐙 GitHub</button>
-        <button class="card" onclick="loadWebsite('https://www.reddit.com', 'Reddit')">🔥 Reddit</button>
-        <button class="card" onclick="loadWebsite('https://www.instagram.com', 'Instagram')">📸 Instagram</button>
-        <button class="card" onclick="showInfo()">ℹ️ Info</button>
-        <button class="card" onclick="showSettings()">⚙️ Settings</button>
-    </div>
-
-    <div id="video-section">
-        <h2>📹 Video Player</h2>
-        <video controls preload="metadata">
-            <source src="your-video-file.mp4" type="video/mp4">
-            Your browser does not support the video tag.
-        </video>
-    </div>
-
-    <!-- Web Viewer -->
-    <div class="web-viewer" id="webViewer">
-        <div class="viewer-header">
-            <div class="viewer-title" id="viewerTitle">Loading...</div>
-            <button class="close-viewer-btn" onclick="closeWebsite()">✕ Close (Esc)</button>
-        </div>
-        <div class="viewer-content">
-            <iframe id="contentFrame" title="Web Content"></iframe>
-        </div>
-    </div>
-
-    <div class="status" id="status"></div>
-    <div class="nav-info">
-        ⬅️ ➡️ : Navigate | Enter: Select | 🔍 : Search | Esc: Close
+    <div class="container">
+        <button class="card" onclick="goTo('https://www.google.com')">Google</button>
+        <button class="card" onclick="goTo('https://www.wikipedia.org')">Wikipedia</button>
+        <button class="card" onclick="goTo('https://www.youtube.com')">YouTube</button>
+        <button class="card" onclick="goTo('https://www.github.com')">GitHub</button>
+        <button class="card" onclick="alert('Ad-Blocker Active')">Ad-Block Info</button>
     </div>
 
     <script>
+        // Use replace to prevent the dashboard from staying in the browser history
+        function goTo(url) {
+            window.location.replace(url);
+        }
+
+        // TV Remote Navigation
         let cards = document.querySelectorAll('.card');
         let index = 0;
-        let isViewerOpen = false;
+        
+        // Focus the first item on load
+        cards[0].focus();
 
-        // Disable common keyboard shortcuts
-        document.addEventListener('keydown', function(e) {
-            if (e.keyCode == 123 || 
-                (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74 || e.keyCode == 67)) || 
-                (e.ctrlKey && e.keyCode == 85) ||
-                (e.ctrlKey && e.keyCode == 83)) {
-                e.preventDefault();
-                showStatus('🔒 Developer tools disabled');
-                return false;
-            }
-
-            // Navigation
-            if (e.key === 'ArrowRight' && !isViewerOpen) {
-                e.preventDefault();
-                if (index < cards.length - 1) index++;
-                cards[index].focus();
-            }
-            if (e.key === 'ArrowLeft' && !isViewerOpen) {
-                e.preventDefault();
-                if (index > 0) index--;
-                cards[index].focus();
-            }
-            if (e.key === 'Enter' && !isViewerOpen) {
-                e.preventDefault();
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' && index < cards.length - 1) index++;
+            if (e.key === 'ArrowLeft' && index > 0) index--;
+            
+            if (e.key === 'Enter') {
                 cards[index].click();
             }
-            if (e.key === 'Escape') {
-                e.preventDefault();
-                if (isViewerOpen) {
-                    closeWebsite();
-                } else {
-                    document.getElementById('urlInput').value = '';
-                }
-            }
-            if (e.key === '/') {
-                e.preventDefault();
-                document.getElementById('urlInput').focus();
-            }
-        });
-
-        function loadWebsite(url, title) {
-            try {
-                document.getElementById('viewerTitle').textContent = '📺 ' + title;
-                document.getElementById('contentFrame').src = url;
-                document.getElementById('webViewer').classList.add('active');
-                isViewerOpen = true;
-                showStatus('Loading: ' + title);
-            } catch (e) {
-                showStatus('❌ Error loading website');
-            }
-        }
-
-        function closeWebsite() {
-            document.getElementById('webViewer').classList.remove('active');
-            document.getElementById('contentFrame').src = '';
-            isViewerOpen = false;
-            showStatus('Closed - Back to Dashboard');
-            cards[index].focus();
-        }
-
-        function searchAndLoadWebsite() {
-            const urlInput = document.getElementById('urlInput').value.trim();
-            if (urlInput === '') {
-                showStatus('⚠️ Please enter a website URL or name');
-                return;
-            }
-
-            let url = urlInput;
             
-            // Check if it's a URL
-            if (!url.startsWith('http://') && !url.startsWith('https://')) {
-                if (url.includes('.')) {
-                    url = 'https://' + url;
-                } else {
-                    url = 'https://www.google.com/search?q=' + encodeURIComponent(urlInput);
-                }
-            }
-
-            try {
-                loadWebsite(url, urlInput);
-                document.getElementById('urlInput').value = '';
-            } catch (e) {
-                showStatus('❌ Error opening website');
-            }
-        }
-
-        function showStatus(message) {
-            const statusDiv = document.getElementById('status');
-            statusDiv.textContent = message;
-            statusDiv.classList.remove('show');
-            void statusDiv.offsetWidth;
-            statusDiv.classList.add('show');
-        }
-
-        function showInfo() {
-            showStatus('ℹ️ Smart TV Dashboard v1.0 - Use Arrow Keys to Navigate');
-        }
-
-        function showSettings() {
-            showStatus('⚙️ Settings: Press / to search or Enter to open');
-        }
-
-        // Handle search input
-        document.getElementById('urlInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                searchAndLoadWebsite();
-            }
-        });
-
-        // Initialize
-        window.addEventListener('load', function() {
-            cards = document.querySelectorAll('.card');
-            index = 0;
-            if (cards.length > 0) {
-                cards[0].focus();
-            }
-            showStatus('✓ Dashboard Ready - Use ⬅️➡️ to Navigate');
+            cards[index].focus();
         });
     </script>
 </body>
