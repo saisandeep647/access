@@ -1,147 +1,698 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ACCESS VERSION 3.O</title>
-    <style>
-        /* --- General Body Styles --- */
-        body { 
-            background-color: #000; color: #fff; font-family: sans-serif; 
-            margin: 0; display: flex; flex-direction: column; 
-            align-items: center; min-height: 100vh; user-select: none; overflow-x: hidden;
-        }
-        h1 { margin-top: 30px; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Access — Web Launchpad & Frame Viewer</title>
+  <style>
+    :root {
+      --bg: #070913;
+      --card-bg: rgba(23, 27, 48, 0.6);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --text-main: #ffffff;
+      --text-sub: #94a3b8;
+      --accent: #8b5cf6;
+      --accent-glow: rgba(139, 92, 246, 0.4);
+      --button-bg: #8257e5;
+      --input-bg: rgba(15, 18, 35, 0.7);
+    }
 
-        /* --- Search Bar Styles --- */
-        .search-wrapper { position: relative; width: 90%; max-width: 600px; margin-top: 20px; z-index: 1001; }
-        #search-input { 
-            width: 100%; padding: 14px; border-radius: 8px; border: 1px solid #444; 
-            background: #1a1a1a; color: #fff; box-sizing: border-box; font-size: 16px; outline: none; 
-        }
-        #search-input:focus { border-color: #fff; }
-        
-        #dropdown { 
-            position: absolute; top: 100%; left: 0; width: 100%; background: #222; 
-            border: 1px solid #444; border-radius: 0 0 8px 8px; display: none; 
-            overflow: hidden; box-shadow: 0px 4px 10px rgba(0,0,0,0.5); 
-        }
-        .dropdown-item { padding: 12px; cursor: pointer; color: #fff; border-bottom: 1px solid #333; display: flex; align-items: center; }
-        .dropdown-item:hover { background: #444; }
-        
-        /* --- Navigation Grid Styles --- */
-        .container {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 20px; width: 90%; max-width: 1000px; margin-top: 30px;
-        }
-        .card {
-            background: #1a1a1a; padding: 30px 20px; text-align: center; border-radius: 12px;
-            text-decoration: none; color: #fff; border: 2px solid #333;
-            transition: 0.2s; cursor: pointer; font-weight: bold; display: block; font-size: 16px;
-        }
-        .card:focus, .card:hover { background: #fff; color: #000; border-color: #fff; transform: scale(1.05); }
+    [data-theme="light"] {
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --card-border: #e2e8f0;
+      --text-main: #0f172a;
+      --text-sub: #64748b;
+      --accent: #7c3aed;
+      --accent-glow: rgba(124, 58, 237, 0.2);
+      --button-bg: #7c3aed;
+      --input-bg: #ffffff;
+    }
 
-        /* --- New Control Buttons --- */
-        .controls { display: flex; justify-content: center; gap: 10px; margin-top: 20px; }
-        .control-btn {
-            padding: 10px 20px; background: #333; color: #fff; border: 1px solid #444;
-            border-radius: 5px; cursor: pointer; font-weight: bold;
-        }
-        .control-btn:hover { background: #555; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-        /* --- Web Frame Styles --- */
-        #frame-container {
-            width: 90%; max-width: 1000px; height: 600px; margin-top: 20px;
-            margin-bottom: 50px; border: 2px solid #444; border-radius: 10px; overflow: hidden; background: #111;
-        }
-        iframe { width: 100%; height: 100%; border: none; }
-    </style>
+    body {
+      min-height: 100vh;
+      background-color: var(--bg);
+      background-image: 
+        radial-gradient(circle at 15% 15%, rgba(139, 92, 246, 0.15) 0%, transparent 40%),
+        radial-gradient(circle at 85% 85%, rgba(99, 102, 241, 0.1) 0%, transparent 40%);
+      color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 32px 24px;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1050px;
+    }
+
+    /* Header */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      margin-bottom: 40px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      font-size: 18px;
+    }
+
+    .brand-logo {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, #a78bfa, #7c3aed);
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      color: white;
+      font-weight: bold;
+      box-shadow: 0 0 15px var(--accent-glow);
+    }
+
+    .theme-btn {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      color: var(--text-main);
+      padding: 8px 18px;
+      border-radius: 20px;
+      font-size: 14px;
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+      transition: all 0.2s;
+    }
+
+    .theme-btn:hover {
+      border-color: var(--accent);
+    }
+
+    /* Main Content */
+    main {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h1 {
+      font-size: clamp(34px, 5vw, 54px);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -1px;
+      margin-bottom: 16px;
+      background: linear-gradient(180deg, #ffffff 30%, #a78bfa 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    [data-theme="light"] h1 {
+      background: linear-gradient(180deg, #0f172a 30%, #6d28d9 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      color: var(--text-sub);
+      font-size: 15px;
+      margin-bottom: 30px;
+    }
+
+    /* Toolbar Controls */
+    .toolbar {
+      width: 100%;
+      max-width: 950px;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      background: var(--input-bg);
+      border: 1px solid var(--card-border);
+      padding: 6px 8px;
+      border-radius: 30px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(12px);
+      transition: border-color 0.2s;
+    }
+
+    .toolbar:focus-within {
+      border-color: var(--accent);
+    }
+
+    .nav-btn {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      color: var(--text-main);
+      padding: 8px 12px;
+      border-radius: 18px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .nav-btn:hover {
+      background: rgba(139, 92, 246, 0.2);
+    }
+
+    select#engine {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      color: var(--text-main);
+      padding: 8px 10px;
+      border-radius: 16px;
+      font-size: 13px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    input#url {
+      flex: 1;
+      background: transparent;
+      border: 0;
+      outline: 0;
+      color: var(--text-main);
+      font-size: 15px;
+      padding-left: 6px;
+    }
+
+    input::placeholder {
+      color: var(--text-sub);
+      opacity: 0.7;
+    }
+
+    .go-btn {
+      background: var(--button-bg);
+      color: white;
+      border: 0;
+      padding: 10px 18px;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
+      box-shadow: 0 0 15px var(--accent-glow);
+      transition: transform 0.1s, filter 0.2s;
+    }
+
+    .go-btn:hover {
+      filter: brightness(1.1);
+      transform: scale(1.02);
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: 1px solid var(--card-border);
+      color: var(--text-sub);
+      padding: 8px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .tab-btn:hover {
+      border-color: var(--accent);
+      color: var(--text-main);
+    }
+
+    /* Favorites Section */
+    section {
+      width: 100%;
+      margin-top: 40px;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .tab-info {
+      color: var(--text-sub);
+      font-size: 12px;
+    }
+
+    .sites-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 12px;
+    }
+
+    .site-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      cursor: pointer;
+      color: var(--text-main);
+      backdrop-filter: blur(10px);
+      transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .site-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--accent);
+    }
+
+    .card-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .icon-box {
+      width: 32px;
+      height: 32px;
+      background: rgba(139, 92, 246, 0.15);
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      color: #a78bfa;
+      font-weight: 700;
+      font-size: 12px;
+      flex-shrink: 0;
+    }
+
+    .site-info strong {
+      display: block;
+      font-size: 13px;
+      text-align: left;
+    }
+
+    .site-info small {
+      display: block;
+      color: var(--text-sub);
+      font-size: 10px;
+      margin-top: 2px;
+      text-align: left;
+    }
+
+    .card-tab-btn {
+      background: none;
+      border: none;
+      color: var(--text-sub);
+      font-size: 14px;
+      cursor: pointer;
+      padding: 4px;
+      transition: color 0.2s;
+    }
+
+    .card-tab-btn:hover {
+      color: var(--accent);
+    }
+
+    /* Embedded Browser Frame Container */
+    .browser-container {
+      display: none;
+      width: 100%;
+      margin-top: 35px;
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      overflow: hidden;
+      background: #ffffff;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    }
+
+    .frame-header {
+      background: #111425;
+      padding: 10px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--card-border);
+      color: var(--text-sub);
+      font-size: 12px;
+    }
+
+    .frame-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .frame-btn {
+      background: rgba(139, 92, 246, 0.15);
+      border: 1px solid var(--card-border);
+      color: #ffffff;
+      padding: 5px 12px;
+      border-radius: 14px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 12px;
+      transition: background 0.2s, border-color 0.2s;
+    }
+
+    .frame-btn:hover {
+      background: var(--button-bg);
+      border-color: var(--accent);
+    }
+
+    .exit-btn {
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #fca5a5;
+    }
+
+    .exit-btn:hover {
+      background: #dc2626;
+      color: #ffffff;
+    }
+
+    iframe {
+      width: 100%;
+      height: 72vh;
+      border: none;
+      display: block;
+    }
+
+    @media (max-width: 700px) {
+      .toolbar {
+        flex-wrap: wrap;
+        padding: 10px;
+      }
+      input#url {
+        width: 100%;
+        order: 1;
+        margin: 5px 0;
+      }
+      .frame-header {
+        flex-direction: column;
+        gap: 8px;
+        align-items: flex-start;
+      }
+    }
+  </style>
 </head>
-<body oncontextmenu="return false;">
+<body>
 
-    <h1>Dashboard</h1>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <div class="brand-logo">A</div>
+        <span>Access</span>
+      </div>
+      <button class="theme-btn" id="themeToggle" onclick="toggleTheme()">Light theme</button>
+    </header>
 
-    <div class="search-wrapper">
-        <input type="text" id="search-input" placeholder="Search the web or type a website..." autocomplete="off">
-        <div id="dropdown"></div>
-    </div>
+    <main>
+      <h1>Your focused web<br>launchpad.</h1>
+      <p class="subtitle">Search or browse in frame, or open directly in same tab.</p>
 
-    <div class="container">
-        <a href="https://www.google.com/webhp?igu=1" target="content-frame" class="card">Google</a>
-        <a href="https://www.wikipedia.org" target="content-frame" class="card">Wikipedia</a>
-        <a href="https://www.youtube.com" target="_blank" class="card">YouTube</a>
-        <a href="https://www.github.com" target="_blank" class="card">GitHub</a>
-        <a href="https://saisandeep647.github.io/access/adsblock" target="_blank" class="card">access</a>
-        <a href="https://saisandeep647.github.io/access/access" target="_blank" class="card">accessv2</a>
-         <a href="https://gofile.io/d/jTOG9m" target="_blank" class="card">pritam and pedro part 1</a>
-        <a href="https://gofile.io/d/OwuUvX" target="_blank" class="card">pritam and pedro part 2</a>
-        <button class="card" id="adblock-btn" onclick="toggleAdBlock()">Ad-Blocker: OFF</button>
-    </div>
+      <!-- Control Toolbar -->
+      <div class="toolbar">
+        <button class="nav-btn" onclick="goBack()" title="Back">⬅ Back</button>
+        <button class="nav-btn" onclick="goForward()" title="Forward">➡ Forward</button>
+        
+        <select id="engine" aria-label="Select Search Engine">
+          <option value="proxy" selected>🌐 Proxy Unblock Mode</option>
+          <option value="bing">Bing</option>
+          <option value="google">Google</option>
+          <option value="duckduckgo">DuckDuckGo</option>
+        </select>
 
-    <div class="controls">
-        <button class="control-btn" onclick="toggleFullScreen()">Full Screen</button>
-        <button class="control-btn" onclick="exitFullScreen()">Exit Full Screen</button>
-        <button class="control-btn" onclick="reloadFrame()">Reload Frame</button>
-    </div>
+        <input type="text" id="url" placeholder="Search or enter URL" autocomplete="off">
+        
+        <button class="go-btn" onclick="openSite()">Load Frame</button>
+        <button class="tab-btn" onclick="openSameTab()" title="Open directly in current tab">Same Tab ↗</button>
+      </div>
 
-    <div id="frame-container">
-        <!-- Added loading="lazy" for better performance on low-end devices -->
-        <iframe name="content-frame" src="about:blank" loading="lazy" title="Web Frame"></iframe>
-    </div>
+      <!-- Favorites Section -->
+      <section>
+        <div class="section-header">
+          <span class="section-title">Favorites</span>
+          <span class="tab-info">Click card to frame, or ↗ for Same Tab</span>
+        </div>
 
-    <script>
-        // 1. Existing Security Logic
-        document.addEventListener('keydown', function(e) {
-            if (e.keyCode == 123 || (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74 || e.keyCode == 67)) || (e.ctrlKey && e.keyCode == 85) || (e.ctrlKey && e.keyCode == 83)) {
-                e.preventDefault(); return false;
-            }
-        });
+        <div class="sites-grid">
+          <div class="site-card" onclick="loadUrl('https://cinehd.app/home')">
+            <div class="card-left">
+              <div class="icon-box">CH</div>
+              <div class="site-info">
+                <strong>CineHD</strong>
+                <small>cinehd.app/home</small>
+              </div>
+            </div>
+            <button class="card-tab-btn" onclick="event.stopPropagation(); loadSameTab('https://cinehd.app/home')" title="Open in Same Tab">↗</button>
+          </div>
 
-        const sites = [
-            { name: "Google", url: "https://www.google.com/webhp?igu=1" },
-            { name: "Wikipedia", url: "https://www.wikipedia.org" },
-            { name: "YouTube", url: "https://www.youtube.com" },
-            { name: "GitHub", url: "https://www.github.com" }
-        ];
+          <div class="site-card" onclick="loadUrl('https://redflix.club/')">
+            <div class="card-left">
+              <div class="icon-box">RF</div>
+              <div class="site-info">
+                <strong>Redfilx</strong>
+                <small>redflix.club</small>
+              </div>
+            </div>
+            <button class="card-tab-btn" onclick="event.stopPropagation(); loadSameTab('https://redflix.club/')" title="Open in Same Tab">↗</button>
+          </div>
 
-        const input = document.getElementById('search-input');
-        const contentFrame = document.querySelector('iframe[name="content-frame"]');
+          <div class="site-card" onclick="loadUrl('https://5movierulz.vote')">
+            <div class="card-left">
+              <div class="icon-box">5M</div>
+              <div class="site-info">
+                <strong>5Movierulz</strong>
+                <small>5movierulz.vote</small>
+              </div>
+            </div>
+            <button class="card-tab-btn" onclick="event.stopPropagation(); loadSameTab('https://5movierulz.vote')" title="Open in Same Tab">↗</button>
+          </div>
 
-        input.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                const query = input.value.trim();
-                if (query) {
-                    // Net27.cc logic
-                    if (query.toLowerCase() === 'net27.cc') {
-                        contentFrame.src = "https://net27.cc/";
-                    } else {
-                        const exactMatch = sites.find(s => s.name.toLowerCase() === query.toLowerCase());
-                        if (exactMatch && exactMatch.name !== 'YouTube' && exactMatch.name !== 'GitHub') {
-                            contentFrame.src = exactMatch.url;
-                        } else {
-                            contentFrame.src = `https://www.google.com/search?q=${encodeURIComponent(query)}&igu=1`;
-                        }
-                    }
-                    input.value = '';
-                }
-            }
-        });
+          <div class="site-card" onclick="loadUrl('https://net27.cc')">
+            <div class="card-left">
+              <div class="icon-box">N27</div>
+              <div class="site-info">
+                <strong>Net27</strong>
+                <small>net27.cc</small>
+              </div>
+            </div>
+            <button class="card-tab-btn" onclick="event.stopPropagation(); loadSameTab('https://net27.cc')" title="Open in Same Tab">↗</button>
+          </div>
 
-        // 2. New Control Functions
-        function toggleFullScreen() {
-            if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+          <div class="site-card" onclick="loadUrl('https://pvrplay.in/')">
+            <div class="card-left">
+              <div class="icon-box">PVR</div>
+              <div class="site-info">
+                <strong>pvrplay</strong>
+                <small>pvrplay.in</small>
+              </div>
+            </div>
+            <button class="card-tab-btn" onclick="event.stopPropagation(); loadSameTab('https://pvrplay.in/')" title="Open in Same Tab">↗</button>
+          </div>
+
+          <div class="site-card" onclick="loadUrl('https://saisandeep647.github.io/access/adsblock')">
+            <div class="card-left">
+              <div class="icon-box">A</div>
+              <div class="site-info">
+                <strong>Access</strong>
+                <small>github.io</small>
+              </div>
+            </div>
+            <button class="card-tab-btn" onclick="event.stopPropagation(); loadSameTab('https://saisandeep647.github.io/access/adsblock')" title="Open in Same Tab">↗</button>
+          </div>
+
+          <div class="site-card" onclick="loadUrl('https://saisandeep647.github.io/access/access')">
+            <div class="card-left">
+              <div class="icon-box">A2</div>
+              <div class="site-info">
+                <strong>Access V2</strong>
+                <small>github.io</small>
+              </div>
+            </div>
+            <button class="card-tab-btn" onclick="event.stopPropagation(); loadSameTab('https://saisandeep647.github.io/access/access')" title="Open in Same Tab">↗</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Embedded Iframe Container -->
+      <div class="browser-container" id="browserContainer">
+        <div class="frame-header">
+          <span id="currentLoadedUrl">Frame Viewer</span>
+          <div class="frame-controls">
+            <button class="frame-btn" onclick="reloadFrame()" title="Reload Frame">🔄 Reload</button>
+            <button class="frame-btn" onclick="toggleFullscreen()" title="Toggle Fullscreen">⛶ Fullscreen</button>
+            <button class="frame-btn" onclick="openCurrentInTab()">Same Tab ↗</button>
+            <button class="frame-btn exit-btn" onclick="closeFrame()" title="Close Frame">✖ Exit</button>
+          </div>
+        </div>
+        <iframe id="browser" allow="fullscreen; autoplay; encrypted-media"></iframe>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const iframe = document.getElementById("browser");
+    const container = document.getElementById("browserContainer");
+    const urlInput = document.getElementById("url");
+    const engineSelect = document.getElementById("engine");
+    const currentUrlLabel = document.getElementById("currentLoadedUrl");
+
+    let currentTargetUrl = "";
+
+    urlInput.addEventListener("keypress", function(e) {
+      if (e.key === "Enter") {
+        openSite();
+      }
+    });
+
+    function getFormattedUrl(value) {
+      if (!value) return "";
+      let url = value;
+      
+      if (!/^https?:\/\//i.test(value)) {
+        if (value.includes(".") && !value.includes(" ")) {
+          url = "https://" + value;
+        } else {
+          const engine = engineSelect.value;
+          const query = encodeURIComponent(value);
+
+          if (engine === "google") {
+            url = "https://www.google.com/search?q=" + query;
+          } else if (engine === "duckduckgo") {
+            url = "https://duckduckgo.com/?q=" + query;
+          } else {
+            url = "https://www.bing.com/search?q=" + query;
+          }
         }
-        function exitFullScreen() {
-            if (document.fullscreenElement) document.exitFullscreen();
-        }
-        function reloadFrame() {
-            contentFrame.src = contentFrame.src;
-        }
+      }
 
-        function toggleAdBlock() {
-            let btn = document.getElementById('adblock-btn');
-            btn.textContent = btn.textContent.includes("OFF") ? "Ad-Blocker: ON" : "Ad-Blocker: OFF";
+      // Bypass X-Frame restrictions using corsproxy
+      if (engineSelect.value === "proxy") {
+        return "https://corsproxy.io/?" + encodeURIComponent(url);
+      }
+      return url;
+    }
+
+    function loadUrl(targetUrl) {
+      urlInput.value = targetUrl;
+      currentTargetUrl = targetUrl;
+      
+      if (engineSelect.value === "proxy") {
+        iframe.src = "https://corsproxy.io/?" + encodeURIComponent(targetUrl);
+      } else {
+        iframe.src = targetUrl;
+      }
+      
+      currentUrlLabel.textContent = targetUrl;
+      showIframe();
+    }
+
+    function openSite() {
+      let value = urlInput.value.trim();
+      if (!value) return;
+
+      let targetUrl = getFormattedUrl(value);
+      currentTargetUrl = targetUrl;
+
+      iframe.src = targetUrl;
+      currentUrlLabel.textContent = targetUrl;
+      showIframe();
+    }
+
+    function openSameTab() {
+      let value = urlInput.value.trim();
+      if (!value) return;
+      let rawUrl = value;
+      if (!/^https?:\/\//i.test(rawUrl)) {
+        if (rawUrl.includes(".") && !rawUrl.includes(" ")) {
+          rawUrl = "https://" + rawUrl;
+        } else {
+          rawUrl = "https://www.google.com/search?q=" + encodeURIComponent(rawUrl);
         }
-    </script>
+      }
+      window.location.href = rawUrl;
+    }
+
+    function loadSameTab(targetUrl) {
+      window.location.href = targetUrl;
+    }
+
+    function openCurrentInTab() {
+      if (currentTargetUrl) {
+        window.location.href = currentTargetUrl;
+      }
+    }
+
+    function reloadFrame() {
+      if (iframe.src) {
+        iframe.src = iframe.src;
+      }
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        if (container.requestFullscreen) {
+          container.requestFullscreen();
+        } else if (container.webkitRequestFullscreen) {
+          container.webkitRequestFullscreen();
+        } else if (container.msRequestFullscreen) {
+          container.msRequestFullscreen();
+        }
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
+    }
+
+    function closeFrame() {
+      iframe.src = "about:blank";
+      container.style.display = "none";
+    }
+
+    function showIframe() {
+      container.style.display = "block";
+      container.scrollIntoView({ behavior: "smooth" });
+    }
+
+    function goBack() {
+      try {
+        iframe.contentWindow.history.back();
+      } catch(e) {
+        console.warn("History restricted.");
+      }
+    }
+
+    function goForward() {
+      try {
+        iframe.contentWindow.history.forward();
+      } catch(e) {
+        console.warn("History restricted.");
+      }
+    }
+
+    function toggleTheme() {
+      const body = document.body;
+      const btn = document.getElementById("themeToggle");
+      if (body.getAttribute("data-theme") === "light") {
+        body.removeAttribute("data-theme");
+        btn.textContent = "Light theme";
+      } else {
+        body.setAttribute("data-theme", "light");
+        btn.textContent = "Dark theme";
+      }
+    }
+  </script>
+
 </body>
 </html>
