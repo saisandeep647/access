@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Access — Web Launchpad & Frame Viewer</title>
+  <title>Access — Web Launchpad & Chrome Frame Viewer</title>
   <style>
     :root {
       --bg: #070913;
@@ -15,8 +15,9 @@
       --accent-glow: rgba(139, 92, 246, 0.4);
       --button-bg: #8257e5;
       --input-bg: rgba(15, 18, 35, 0.7);
+      --chrome-tab-bg: #0d111e;
+      --chrome-nav-bg: rgba(23, 27, 48, 0.85);
     }
-
     [data-theme="light"] {
       --bg: #f8fafc;
       --card-bg: #ffffff;
@@ -27,18 +28,18 @@
       --accent-glow: rgba(124, 58, 237, 0.2);
       --button-bg: #7c3aed;
       --input-bg: #ffffff;
+      --chrome-tab-bg: #e2e8f0;
+      --chrome-nav-bg: #f1f5f9;
     }
-
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
     }
-
     body {
       min-height: 100vh;
       background-color: var(--bg);
-      background-image: 
+      background-image:
         radial-gradient(circle at 15% 15%, rgba(139, 92, 246, 0.15) 0%, transparent 40%),
         radial-gradient(circle at 85% 85%, rgba(99, 102, 241, 0.1) 0%, transparent 40%);
       color: var(--text-main);
@@ -49,12 +50,10 @@
       padding: 32px 24px;
       transition: background-color 0.3s, color 0.3s;
     }
-
     .container {
       width: 100%;
       max-width: 1050px;
     }
-
     /* Header */
     header {
       display: flex;
@@ -63,7 +62,6 @@
       width: 100%;
       margin-bottom: 40px;
     }
-
     .brand {
       display: flex;
       align-items: center;
@@ -71,7 +69,6 @@
       font-weight: 700;
       font-size: 18px;
     }
-
     .brand-logo {
       width: 36px;
       height: 36px;
@@ -83,7 +80,6 @@
       font-weight: bold;
       box-shadow: 0 0 15px var(--accent-glow);
     }
-
     .theme-btn {
       background: var(--card-bg);
       border: 1px solid var(--card-border);
@@ -95,11 +91,9 @@
       backdrop-filter: blur(10px);
       transition: all 0.2s;
     }
-
     .theme-btn:hover {
       border-color: var(--accent);
     }
-
     /* Main Content */
     main {
       text-align: center;
@@ -107,7 +101,6 @@
       flex-direction: column;
       align-items: center;
     }
-
     h1 {
       font-size: clamp(34px, 5vw, 54px);
       font-weight: 800;
@@ -118,19 +111,16 @@
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
-
     [data-theme="light"] h1 {
       background: linear-gradient(180deg, #0f172a 30%, #6d28d9 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
-
     .subtitle {
       color: var(--text-sub);
       font-size: 15px;
       margin-bottom: 30px;
     }
-
     /* Toolbar Controls */
     .toolbar {
       width: 100%;
@@ -146,11 +136,9 @@
       backdrop-filter: blur(12px);
       transition: border-color 0.2s;
     }
-
     .toolbar:focus-within {
       border-color: var(--accent);
     }
-
     .nav-btn {
       background: var(--card-bg);
       border: 1px solid var(--card-border);
@@ -161,11 +149,9 @@
       cursor: pointer;
       transition: background 0.2s;
     }
-
     .nav-btn:hover {
       background: rgba(139, 92, 246, 0.2);
     }
-
     select#engine {
       background: var(--card-bg);
       border: 1px solid var(--card-border);
@@ -176,7 +162,6 @@
       outline: none;
       cursor: pointer;
     }
-
     input#url {
       flex: 1;
       background: transparent;
@@ -186,12 +171,10 @@
       font-size: 15px;
       padding-left: 6px;
     }
-
     input::placeholder {
       color: var(--text-sub);
       opacity: 0.7;
     }
-
     .go-btn {
       background: var(--button-bg);
       color: white;
@@ -204,12 +187,10 @@
       box-shadow: 0 0 15px var(--accent-glow);
       transition: transform 0.1s, filter 0.2s;
     }
-
     .go-btn:hover {
       filter: brightness(1.1);
       transform: scale(1.02);
     }
-
     .tab-btn {
       background: transparent;
       border: 1px solid var(--card-border);
@@ -221,41 +202,34 @@
       cursor: pointer;
       transition: all 0.2s;
     }
-
     .tab-btn:hover {
       border-color: var(--accent);
       color: var(--text-main);
     }
-
     /* Favorites Section */
     section {
       width: 100%;
       margin-top: 40px;
     }
-
     .section-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 16px;
     }
-
     .section-title {
       font-weight: 700;
       font-size: 14px;
     }
-
     .tab-info {
       color: var(--text-sub);
       font-size: 12px;
     }
-
     .sites-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
       gap: 12px;
     }
-
     .site-card {
       display: flex;
       align-items: center;
@@ -267,20 +241,25 @@
       cursor: pointer;
       color: var(--text-main);
       backdrop-filter: blur(10px);
-      transition: transform 0.2s, border-color 0.2s;
+      transition: transform 0.2s, border-color 0.2s, outline 0.1s;
     }
-
     .site-card:hover {
       transform: translateY(-2px);
       border-color: var(--accent);
     }
-
+    .site-card:focus-visible, .site-card:focus {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+      transform: translateY(-2px);
+      border-color: var(--accent);
+    }
     .card-left {
       display: flex;
       align-items: center;
       gap: 10px;
+      overflow: hidden;
+      flex: 1;
     }
-
     .icon-box {
       width: 32px;
       height: 32px;
@@ -293,21 +272,33 @@
       font-size: 12px;
       flex-shrink: 0;
     }
-
+    .site-info {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      flex: 1;
+    }
     .site-info strong {
       display: block;
       font-size: 13px;
       text-align: left;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
-
     .site-info small {
       display: block;
       color: var(--text-sub);
       font-size: 10px;
       margin-top: 2px;
       text-align: left;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
-
+    .card-actions-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
     .card-tab-btn {
       background: none;
       border: none;
@@ -315,14 +306,27 @@
       font-size: 14px;
       cursor: pointer;
       padding: 4px;
-      transition: color 0.2s;
+      transition: color 0.2s, transform 0.2s;
     }
-
     .card-tab-btn:hover {
       color: var(--accent);
+      transform: scale(1.15);
+    }
+    .card-delete-btn {
+      background: none;
+      border: none;
+      color: var(--text-sub);
+      font-size: 14px;
+      cursor: pointer;
+      padding: 4px;
+      transition: color 0.2s, transform 0.2s;
+    }
+    .card-delete-btn:hover {
+      color: #ef4444;
+      transform: scale(1.15);
     }
 
-    /* Embedded Browser Frame Container */
+    /* Embedded Browser Chrome Simulator Container */
     .browser-container {
       display: none;
       width: 100%;
@@ -330,63 +334,534 @@
       border: 1px solid var(--card-border);
       border-radius: 16px;
       overflow: hidden;
-      background: #ffffff;
+      background: var(--bg);
       box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+      flex-direction: column;
     }
 
-    .frame-header {
-      background: #111425;
-      padding: 10px 16px;
+    /* Chrome Tab Bar */
+    .chrome-tabs-container {
+      background: var(--chrome-tab-bg);
+      padding: 8px 12px 0 12px;
       display: flex;
-      justify-content: space-between;
-      align-items: center;
+      align-items: flex-end;
+      gap: 6px;
       border-bottom: 1px solid var(--card-border);
+      overflow-x: auto;
+    }
+    .chrome-tabs-list {
+      display: flex;
+      align-items: flex-end;
+      gap: 4px;
+      flex-grow: 1;
+    }
+    .chrome-tab {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--card-border);
+      border-bottom: none;
       color: var(--text-sub);
+      padding: 8px 14px;
+      border-radius: 8px 8px 0 0;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      max-width: 160px;
+      min-width: 90px;
+      transition: all 0.2s;
+      position: relative;
+      user-select: none;
+    }
+    .chrome-tab:hover {
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text-main);
+    }
+    .chrome-tab.active {
+      background: var(--chrome-nav-bg);
+      color: var(--text-main);
+      border-color: var(--card-border);
+      border-bottom: 1px solid var(--chrome-nav-bg);
+      z-index: 2;
+      font-weight: 600;
+    }
+    .chrome-tab-icon {
       font-size: 12px;
     }
+    .chrome-tab-title {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      flex-grow: 1;
+    }
+    .chrome-tab-close {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      font-size: 10px;
+      color: var(--text-sub);
+      transition: all 0.2s;
+    }
+    .chrome-tab-close:hover {
+      background: rgba(239, 68, 68, 0.2);
+      color: #fca5a5;
+    }
 
-    .frame-controls {
+    .chrome-new-tab-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--card-border);
+      color: var(--text-main);
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      margin-bottom: 5px;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+    .chrome-new-tab-btn:hover {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+      transform: scale(1.05);
+    }
+
+    /* Chrome Navigation Bar */
+    .chrome-nav-bar {
+      background: var(--chrome-nav-bg);
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid var(--card-border);
+      flex-wrap: wrap;
+    }
+    .chrome-nav-btns {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .chrome-nav-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-sub);
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+    .chrome-nav-btn:hover:not(:disabled) {
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text-main);
+    }
+    .chrome-nav-btn:disabled {
+      opacity: 0.25;
+      cursor: not-allowed;
+    }
+
+    /* Address Box */
+    .chrome-address-wrapper {
+      display: flex;
+      align-items: center;
+      flex-grow: 1;
+      background: var(--input-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 5px 14px;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+    .chrome-address-wrapper:focus-within {
+      border-color: var(--accent);
+      box-shadow: 0 0 10px var(--accent-glow);
+    }
+    .chrome-lock-icon {
+      color: #10b981;
+      font-size: 12px;
+    }
+    .chrome-address-input {
+      flex-grow: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text-main);
+      font-size: 13.5px;
+    }
+    .chrome-star-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-sub);
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+    .chrome-star-btn.starred {
+      color: #eab308;
+    }
+
+    /* Toolbar Right Controls */
+    .chrome-toolbar-right {
       display: flex;
       align-items: center;
       gap: 8px;
     }
-
-    .frame-btn {
-      background: rgba(139, 92, 246, 0.15);
+    .chrome-select {
+      background: var(--input-bg);
       border: 1px solid var(--card-border);
-      color: #ffffff;
-      padding: 5px 12px;
-      border-radius: 14px;
+      color: var(--text-main);
+      padding: 5px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+      outline: none;
+      cursor: pointer;
+    }
+    .chrome-shield-btn {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      color: #34d399;
+      padding: 5px 10px;
+      border-radius: 12px;
+      font-size: 12px;
       cursor: pointer;
       font-weight: 600;
-      font-size: 12px;
-      transition: background 0.2s, border-color 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.2s;
     }
-
-    .frame-btn:hover {
-      background: var(--button-bg);
-      border-color: var(--accent);
-    }
-
-    .exit-btn {
-      background: rgba(239, 68, 68, 0.2);
-      border: 1px solid rgba(239, 68, 68, 0.4);
+    .chrome-shield-btn.disabled {
+      background: rgba(239, 68, 68, 0.1);
+      border-color: rgba(239, 68, 68, 0.25);
       color: #fca5a5;
     }
 
-    .exit-btn:hover {
+    /* Frame Action Controls */
+    .chrome-action-btn {
+      background: rgba(139, 92, 246, 0.15);
+      border: 1px solid var(--card-border);
+      color: var(--text-main);
+      padding: 5px 10px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 12px;
+      transition: all 0.2s;
+    }
+    .chrome-action-btn:hover {
+      background: var(--button-bg);
+      border-color: var(--accent);
+    }
+    .chrome-exit-btn {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #fca5a5;
+    }
+    .chrome-exit-btn:hover {
       background: #dc2626;
-      color: #ffffff;
+      color: white;
     }
 
-    iframe {
+    /* Browser Content Layout */
+    .chrome-frame-body {
+      position: relative;
       width: 100%;
       height: 72vh;
+      background: #111425;
+    }
+    iframe {
+      width: 100%;
+      height: 100%;
       border: none;
       display: block;
+      background: #ffffff;
     }
 
-    @media (max-width: 700px) {
+    /* New Tab Screen Mockup */
+    .chrome-newtab-screen {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--bg);
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      box-sizing: border-box;
+      overflow-y: auto;
+      z-index: 5;
+    }
+    .newtab-logo {
+      font-size: clamp(28px, 4vw, 40px);
+      font-weight: 800;
+      margin-bottom: 24px;
+      background: linear-gradient(135deg, #a78bfa, #7c3aed);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .newtab-logo-icon {
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(135deg, #a78bfa, #7c3aed);
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      color: white;
+      font-size: 22px;
+      box-shadow: 0 0 20px var(--accent-glow);
+    }
+    .newtab-search-wrapper {
+      width: 100%;
+      max-width: 520px;
+      display: flex;
+      background: var(--input-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 30px;
+      padding: 8px 16px;
+      gap: 10px;
+      align-items: center;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      margin-bottom: 30px;
+      transition: all 0.2s;
+    }
+    .newtab-search-wrapper:focus-within {
+      border-color: var(--accent);
+      box-shadow: 0 10px 30px var(--accent-glow);
+    }
+    .newtab-search-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text-main);
+      font-size: 15px;
+    }
+    .newtab-shortcuts {
+      width: 100%;
+      max-width: 650px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+    .newtab-shortcut {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      padding: 12px 8px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+      color: var(--text-main);
+      overflow: hidden;
+    }
+    .newtab-shortcut:hover {
+      transform: translateY(-3px);
+      border-color: var(--accent);
+    }
+    .newtab-shortcut span {
+      font-size: 11px;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
+    }
+
+    /* Smart Fallback Detector Overlay */
+    .iframe-fallback-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(11, 13, 24, 0.95);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      box-sizing: border-box;
+      text-align: center;
+      z-index: 4;
+    }
+    [data-theme="light"] .iframe-fallback-container {
+      background: rgba(241, 245, 249, 0.95);
+    }
+    .fallback-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 24px;
+      max-width: 480px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+    }
+    .fallback-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--text-main);
+    }
+    .fallback-desc {
+      font-size: 13px;
+      color: var(--text-sub);
+      margin-bottom: 18px;
+      line-height: 1.5;
+    }
+    .fallback-btns {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .fallback-btn {
+      background: var(--button-bg);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .fallback-btn:hover {
+      filter: brightness(1.1);
+    }
+    .fallback-btn.secondary {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-main);
+      border: 1px solid var(--card-border);
+    }
+    .fallback-btn.secondary:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    /* Tip Banner bottom of browser container */
+    .chrome-tip-banner {
+      background: var(--chrome-tab-bg);
+      border-top: 1px solid var(--card-border);
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--text-sub);
+    }
+    .chrome-tip-banner a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .chrome-tip-banner a:hover {
+      text-decoration: underline;
+    }
+    .chrome-tip-close {
+      background: transparent;
+      border: none;
+      color: var(--text-sub);
+      cursor: pointer;
+      font-size: 14px;
+      padding: 0 4px;
+    }
+
+    /* New Favorite Dialog */
+    .dialog-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(4px);
+      z-index: 10000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+    .dialog-box {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      width: 90%;
+      max-width: 400px;
+      padding: 24px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+    }
+    .dialog-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+    .dialog-field {
+      margin-bottom: 14px;
+    }
+    .dialog-field label {
+      display: block;
+      font-size: 12px;
+      color: var(--text-sub);
+      margin-bottom: 6px;
+    }
+    .dialog-field input {
+      width: 100%;
+      background: var(--input-bg);
+      border: 1px solid var(--card-border);
+      color: var(--text-main);
+      padding: 10px;
+      border-radius: 8px;
+      outline: none;
+      font-size: 14px;
+    }
+    .dialog-field input:focus {
+      border-color: var(--accent);
+    }
+    .dialog-btns {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .dialog-btn {
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+    }
+    .dialog-btn.cancel {
+      background: transparent;
+      color: var(--text-sub);
+    }
+    .dialog-btn.cancel:hover {
+      color: var(--text-main);
+    }
+    .dialog-btn.confirm {
+      background: var(--button-bg);
+      color: white;
+    }
+
+    @media (max-width: 768px) {
       .toolbar {
         flex-wrap: wrap;
         padding: 10px;
@@ -396,16 +871,21 @@
         order: 1;
         margin: 5px 0;
       }
-      .frame-header {
+      .chrome-nav-bar {
         flex-direction: column;
         gap: 8px;
-        align-items: flex-start;
+        align-items: stretch;
+      }
+      .chrome-toolbar-right {
+        justify-content: space-between;
+      }
+      .newtab-shortcuts {
+        grid-template-columns: repeat(2, 1fr);
       }
     }
   </style>
 </head>
 <body>
-
   <div class="container">
     <header>
       <div class="brand">
@@ -414,7 +894,6 @@
       </div>
       <button class="theme-btn" id="themeToggle" onclick="toggleTheme()">Light theme</button>
     </header>
-
     <main>
       <h1>Your focused web<br>launchpad.</h1>
       <p class="subtitle">Search or browse in frame, or open directly in same tab.</p>
@@ -423,16 +902,15 @@
       <div class="toolbar">
         <button class="nav-btn" onclick="goBack()" title="Back">⬅ Back</button>
         <button class="nav-btn" onclick="goForward()" title="Forward">➡ Forward</button>
-        
+
         <select id="engine" aria-label="Select Search Engine">
           <option value="proxy" selected>🌐 Proxy Unblock Mode</option>
           <option value="bing">Bing</option>
           <option value="google">Google</option>
           <option value="duckduckgo">DuckDuckGo</option>
         </select>
-
         <input type="text" id="url" placeholder="Search or enter URL" autocomplete="off">
-        
+
         <button class="go-btn" onclick="openSite()">Load Frame</button>
         <button class="tab-btn" onclick="openSameTab()" title="Open directly in current tab">Same Tab ↗</button>
       </div>
@@ -443,111 +921,465 @@
           <span class="section-title">Favorites</span>
           <span class="tab-info">Click card to frame, or ↗ for Same Tab</span>
         </div>
-
-        <div class="sites-grid">
-          <div class="site-card" onclick="loadUrl('https://cinehd.app/home')">
-            <div class="card-left">
-              <div class="icon-box">CH</div>
-              <div class="site-info">
-                <strong>CineHD</strong>
-                <small>cinehd.app/home</small>
-              </div>
-            </div>
-            <button class="card-tab-btn" onclick="event.stopPropagation(); loadSameTab('https://cinehd.app/home')" title="Open in Same Tab">↗</button>
-          </div>
-
-          <div class="site-card" onclick="loadUrl('https://redflix.club/')">
-            <div class="card-left">
-              <div class="icon-box">RF</div>
-              <div class="site-info">
-                <strong>Redfilx</strong>
-                <small>redflix.club</small>
-              </div>
-            </div>
-            <button class="card-tab-btn" onclick="event.stopPropagation(); loadSameTab('https://redflix.club/')" title="Open in Same Tab">↗</button>
-          </div>
-
-          <div class="site-card" onclick="loadUrl('https://5movierulz.vote')">
-            <div class="card-left">
-              <div class="icon-box">5M</div>
-              <div class="site-info">
-                <strong>5Movierulz</strong>
-                <small>5movierulz.vote</small>
-              </div>
-            </div>
-            <button class="card-tab-btn" onclick="event.stopPropagation(); loadSameTab('https://5movierulz.vote')" title="Open in Same Tab">↗</button>
-          </div>
-
-          <div class="site-card" onclick="loadUrl('https://net27.cc')">
-            <div class="card-left">
-              <div class="icon-box">N27</div>
-              <div class="site-info">
-                <strong>Net27</strong>
-                <small>net27.cc</small>
-              </div>
-            </div>
-            <button class="card-tab-btn" onclick="event.stopPropagation(); loadSameTab('https://net27.cc')" title="Open in Same Tab">↗</button>
-          </div>
-
-          <div class="site-card" onclick="loadUrl('https://pvrplay.in/')">
-            <div class="card-left">
-              <div class="icon-box">PVR</div>
-              <div class="site-info">
-                <strong>pvrplay</strong>
-                <small>pvrplay.in</small>
-              </div>
-            </div>
-            <button class="card-tab-btn" onclick="event.stopPropagation(); loadSameTab('https://pvrplay.in/')" title="Open in Same Tab">↗</button>
-          </div>
-
-          <div class="site-card" onclick="loadUrl('https://saisandeep647.github.io/access/adsblock')">
-            <div class="card-left">
-              <div class="icon-box">A</div>
-              <div class="site-info">
-                <strong>Access</strong>
-                <small>github.io</small>
-              </div>
-            </div>
-            <button class="card-tab-btn" onclick="event.stopPropagation(); loadSameTab('https://saisandeep647.github.io/access/adsblock')" title="Open in Same Tab">↗</button>
-          </div>
-
-          <div class="site-card" onclick="loadUrl('https://saisandeep647.github.io/access/access')">
-            <div class="card-left">
-              <div class="icon-box">A2</div>
-              <div class="site-info">
-                <strong>Access V2</strong>
-                <small>github.io</small>
-              </div>
-            </div>
-            <button class="card-tab-btn" onclick="event.stopPropagation(); loadSameTab('https://saisandeep647.github.io/access/access')" title="Open in Same Tab">↗</button>
-          </div>
+        <div class="sites-grid" id="favoritesGrid">
+          <!-- Dynamically filled from localStorage / default list -->
         </div>
       </section>
 
-      <!-- Embedded Iframe Container -->
+      <!-- Simulated Chrome Browser Container -->
       <div class="browser-container" id="browserContainer">
-        <div class="frame-header">
-          <span id="currentLoadedUrl">Frame Viewer</span>
-          <div class="frame-controls">
-            <button class="frame-btn" onclick="reloadFrame()" title="Reload Frame">🔄 Reload</button>
-            <button class="frame-btn" onclick="toggleFullscreen()" title="Toggle Fullscreen">⛶ Fullscreen</button>
-            <button class="frame-btn" onclick="openCurrentInTab()">Same Tab ↗</button>
-            <button class="frame-btn exit-btn" onclick="closeFrame()" title="Close Frame">✖ Exit</button>
+        <!-- Chrome Tab Bar -->
+        <div class="chrome-tabs-container">
+          <div class="chrome-tabs-list" id="chromeTabsList">
+            <!-- Tabs dynamically rendered -->
+          </div>
+          <button class="chrome-new-tab-btn" onclick="addNewTab()" title="New Tab">+</button>
+        </div>
+
+        <!-- Chrome Navigation / Control Bar -->
+        <div class="chrome-nav-bar">
+          <div class="chrome-nav-btns">
+            <button class="chrome-nav-btn" id="chromeBackBtn" onclick="goBack()" title="Back">⬅</button>
+            <button class="chrome-nav-btn" id="chromeForwardBtn" onclick="goForward()" title="Forward">➡</button>
+            <button class="chrome-nav-btn" onclick="reloadFrame()" title="Reload">🔄</button>
+            <button class="chrome-nav-btn" onclick="goHome()" title="Home">🏠</button>
+          </div>
+
+          <!-- Address Wrapper with SSL and Star Favorite Button -->
+          <div class="chrome-address-wrapper">
+            <span class="chrome-lock-icon" title="Secure Connection">🔒</span>
+            <input type="text" class="chrome-address-input" id="chromeAddressInput" placeholder="Search Google or type a URL" autocomplete="off">
+            <button class="chrome-star-btn" id="chromeStarBtn" onclick="toggleCurrentAsFavorite()" title="Bookmark this page">⭐</button>
+          </div>
+
+          <!-- Right side tools -->
+          <div class="chrome-toolbar-right">
+            <select class="chrome-select" id="chromeProxySelect" onchange="changeProxyEngine()" aria-label="Proxy selection">
+              <option value="proxy">🌐 Proxy (corsproxy.io)</option>
+              <option value="allorigins">🌐 Proxy (allorigins)</option>
+              <option value="direct">⚡ Direct Native Mode</option>
+            </select>
+            <button class="chrome-shield-btn" id="chromeAdBlockBtn" onclick="toggleAdBlock()" title="Toggle simulated ad blocker">🛡️ Shield: ON</button>
+            <button class="chrome-action-btn" onclick="toggleFullscreen()" title="Toggle Fullscreen">⛶</button>
+            <button class="chrome-action-btn" onclick="openCurrentInTab()" title="Open in current tab">↗ Same Tab</button>
+            <button class="chrome-action-btn chrome-exit-btn" onclick="closeFrame()" title="Close Frame">✖ Exit</button>
           </div>
         </div>
-        <iframe id="browser" allow="fullscreen; autoplay; encrypted-media"></iframe>
+
+        <!-- Chrome Frame Body -->
+        <div class="chrome-frame-body">
+          <!-- Fallback/Tips Overlay overlaying the iframe -->
+          <div class="iframe-fallback-container" id="iframeFallbackContainer" style="display: none;">
+            <div class="fallback-card">
+              <div class="fallback-title">Having trouble loading this page?</div>
+              <p class="fallback-desc">Many high-security websites (like Google, YouTube, Netflix, CineHD) block iframe loading natively due to X-Frame security policies. Try our unblock engines or open natively.</p>
+              <div class="fallback-btns">
+                <button class="fallback-btn" onclick="tryWithProxy()">Try with Proxy Mode</button>
+                <button class="fallback-btn secondary" onclick="openCurrentInTab()">Open in Same Tab ↗</button>
+                <button class="fallback-btn secondary" onclick="openInNewTab()">Open in New Tab 🗗</button>
+                <button class="fallback-btn secondary" onclick="dismissFallback()">Ignore</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Chrome New Tab Page (displayed if tab URL is empty) -->
+          <div class="chrome-newtab-screen" id="chromeNewTabScreen" style="display: none;">
+            <div class="newtab-logo">
+              <div class="newtab-logo-icon">A</div>
+              <span>Access Web</span>
+            </div>
+            <div class="newtab-search-wrapper">
+              <span style="font-size: 16px;">🔍</span>
+              <input type="text" class="newtab-search-input" id="newtabSearchInput" placeholder="Search Google or type web address" autocomplete="off">
+            </div>
+            <div class="newtab-shortcuts" id="newtabShortcutsGrid">
+              <!-- Shortcuts mirrored from Favorites -->
+            </div>
+          </div>
+
+          <!-- Active iframe element -->
+          <iframe id="browser" allow="fullscreen; autoplay; encrypted-media" title="Web View"></iframe>
+        </div>
+
+        <!-- Extension Help Tip Banner -->
+        <div class="chrome-tip-banner" id="chromeTipBanner">
+          <span>💡 <strong>Tip:</strong> Load 100% of websites natively, faster, and ads-free inside the frame by installing the free extension: <a href="https://chrome.google.com/webstore/detail/ignore-x-frame-headers/gleekbpecocbaddidodcjeihbgeecofg" target="_blank">Ignore X-Frame Headers</a>.</span>
+          <button class="chrome-tip-close" onclick="dismissTipBanner()">✖</button>
+        </div>
       </div>
     </main>
   </div>
 
+  <!-- Dialog for Adding Dynamic Bookmarks/Favorites -->
+  <div class="dialog-overlay" id="addFavoriteDialog">
+    <div class="dialog-box">
+      <div class="dialog-title">Add Bookmark</div>
+      <div class="dialog-field">
+        <label for="dialogFavName">Site Name</label>
+        <input type="text" id="dialogFavName" placeholder="e.g. My Website">
+      </div>
+      <div class="dialog-field">
+        <label for="dialogFavUrl">URL</label>
+        <input type="text" id="dialogFavUrl" placeholder="https://example.com">
+      </div>
+      <div class="dialog-btns">
+        <button class="dialog-btn cancel" onclick="closeAddFavoriteDialog()">Cancel</button>
+        <button class="dialog-btn confirm" onclick="confirmAddFavorite()">Save Bookmark</button>
+      </div>
+    </div>
+  </div>
+
   <script>
+    // Elements references
     const iframe = document.getElementById("browser");
     const container = document.getElementById("browserContainer");
     const urlInput = document.getElementById("url");
     const engineSelect = document.getElementById("engine");
-    const currentUrlLabel = document.getElementById("currentLoadedUrl");
+    const chromeTabsList = document.getElementById("chromeTabsList");
+    const chromeAddressInput = document.getElementById("chromeAddressInput");
+    const chromeProxySelect = document.getElementById("chromeProxySelect");
+    const chromeAdBlockBtn = document.getElementById("chromeAdBlockBtn");
+    const chromeStarBtn = document.getElementById("chromeStarBtn");
+    const chromeNewTabScreen = document.getElementById("chromeNewTabScreen");
+    const iframeFallbackContainer = document.getElementById("iframeFallbackContainer");
+    const newtabSearchInput = document.getElementById("newtabSearchInput");
+    const favoritesGrid = document.getElementById("favoritesGrid");
+    const newtabShortcutsGrid = document.getElementById("newtabShortcutsGrid");
+    const addFavoriteDialog = document.getElementById("addFavoriteDialog");
+    const dialogFavName = document.getElementById("dialogFavName");
+    const dialogFavUrl = document.getElementById("dialogFavUrl");
 
-    let currentTargetUrl = "";
+    // Defaults for Favorites list
+    const DEFAULT_FAVORITES = [
+      { name: "CineHD", url: "https://cinehd.app/home" },
+      { name: "Redfilx", url: "https://redflix.club/" },
+      { name: "5Movierulz", url: "https://5movierulz.vote" },
+      { name: "Net27", url: "https://net27.cc" },
+      { name: "pvrplay", url: "https://pvrplay.in/" },
+      { name: "Access", url: "https://saisandeep647.github.io/access/adsblock" },
+      { name: "Access V2", url: "https://saisandeep647.github.io/access/access" }
+    ];
+
+    // Multi-tab simulated state
+    let tabs = [];
+    let activeTabId = null;
+    let tabIdCounter = 1;
+    let isAdBlockerActive = true;
+    let remoteSelectedIndex = -1;
+
+    // Load initial configuration from localStorage
+    let favorites = [];
+    try {
+      favorites = JSON.parse(localStorage.getItem("access_favorites"));
+    } catch(e) {}
+    if (!favorites || !Array.isArray(favorites) || favorites.length === 0) {
+      favorites = [...DEFAULT_FAVORITES];
+      localStorage.setItem("access_favorites", JSON.stringify(favorites));
+    }
+
+    // Initialize application state
+    window.addEventListener("DOMContentLoaded", () => {
+      // Load saved theme
+      const savedTheme = localStorage.getItem("access_theme");
+      if (savedTheme === "light") {
+        document.body.setAttribute("data-theme", "light");
+        document.getElementById("themeToggle").textContent = "Dark theme";
+      } else {
+        document.body.removeAttribute("data-theme");
+        document.getElementById("themeToggle").textContent = "Light theme";
+      }
+
+      // Initialize dynamic Favorites UI
+      renderFavorites();
+
+      // Create primary default tab
+      addNewTab();
+
+      // Setup Keyboard shortcuts
+      setupKeyboardShortcuts();
+    });
+
+    // Favorites Rendering and Manager
+    function renderFavorites() {
+      // Fill Main favorites landing list
+      favoritesGrid.innerHTML = "";
+      favorites.forEach((fav, idx) => {
+        const domainShort = getDomainLabel(fav.url);
+        const iconLetter = fav.name ? fav.name.substring(0, 2).toUpperCase() : "WS";
+
+        const card = document.createElement("div");
+        card.className = "site-card";
+        card.tabIndex = 0;
+        card.onclick = () => loadUrl(fav.url);
+        card.addEventListener("focus", () => {
+          remoteSelectedIndex = idx;
+        });
+
+        card.innerHTML = `
+          <div class="card-left">
+            <div class="icon-box">${iconLetter}</div>
+            <div class="site-info">
+              <strong>${fav.name}</strong>
+              <small>${domainShort}</small>
+            </div>
+          </div>
+          <div class="card-actions-wrapper">
+            <button class="card-tab-btn" onclick="event.stopPropagation(); loadSameTab('${fav.url}')" title="Open in Same Tab">↗</button>
+            <button class="card-delete-btn" onclick="event.stopPropagation(); deleteFavorite(${idx})" title="Delete favorite">×</button>
+          </div>
+        `;
+        favoritesGrid.appendChild(card);
+      });
+
+      // Add dynamic "Add Favorite" card at the end
+      const addCard = document.createElement("div");
+      addCard.className = "site-card";
+      addCard.tabIndex = 0;
+      addCard.style.borderStyle = "dashed";
+      addCard.onclick = () => openEmptyAddFavoriteDialog();
+      addCard.addEventListener("focus", () => {
+        remoteSelectedIndex = favorites.length;
+      });
+      addCard.innerHTML = `
+        <div class="card-left" style="justify-content: center; width: 100%;">
+          <div class="icon-box" style="background: rgba(139, 92, 246, 0.1); color: var(--accent); font-size: 16px;">+</div>
+          <div class="site-info">
+            <strong style="color: var(--accent);">Add Bookmark</strong>
+            <small>Save any link</small>
+          </div>
+        </div>
+      `;
+      favoritesGrid.appendChild(addCard);
+
+      // Mirror shortcuts to New Tab screen
+      newtabShortcutsGrid.innerHTML = "";
+      favorites.slice(0, 7).forEach((fav) => {
+        const iconLetter = fav.name ? fav.name.substring(0, 2).toUpperCase() : "WS";
+        const card = document.createElement("a");
+        card.className = "newtab-shortcut";
+        card.href = "#";
+        card.onclick = (e) => {
+          e.preventDefault();
+          loadUrl(fav.url);
+        };
+        card.innerHTML = `
+          <div class="icon-box">${iconLetter}</div>
+          <span>${fav.name}</span>
+        `;
+        newtabShortcutsGrid.appendChild(card);
+      });
+
+      // Mirror Add Shortcut to New Tab screen
+      const ntAddCard = document.createElement("a");
+      ntAddCard.className = "newtab-shortcut";
+      ntAddCard.href = "#";
+      ntAddCard.onclick = (e) => {
+        e.preventDefault();
+        openEmptyAddFavoriteDialog();
+      };
+      ntAddCard.innerHTML = `
+        <div class="icon-box" style="background: rgba(139, 92, 246, 0.1); color: var(--accent); font-size: 16px;">+</div>
+        <span style="color: var(--accent);">Add Bookmark</span>
+      `;
+      newtabShortcutsGrid.appendChild(ntAddCard);
+    }
+
+    function openEmptyAddFavoriteDialog() {
+      dialogFavName.value = "";
+      dialogFavUrl.value = "";
+      addFavoriteDialog.style.display = "flex";
+      dialogFavName.focus();
+    }
+
+    function getDomainLabel(urlStr) {
+      try {
+        const u = new URL(urlStr);
+        return u.hostname.replace("www.", "");
+      } catch(e) {
+        return urlStr.replace("https://", "").replace("http://", "").split("/")[0];
+      }
+    }
+
+    function deleteFavorite(idx) {
+      favorites.splice(idx, 1);
+      localStorage.setItem("access_favorites", JSON.stringify(favorites));
+      renderFavorites();
+      updateStarButtonState();
+    }
+
+    function toggleCurrentAsFavorite() {
+      const activeTab = getActiveTab();
+      if (!activeTab || !activeTab.url) return;
+
+      const url = activeTab.url;
+      const foundIdx = favorites.findIndex(f => f.url === url);
+
+      if (foundIdx !== -1) {
+        // Remove from bookmarks
+        favorites.splice(foundIdx, 1);
+        localStorage.setItem("access_favorites", JSON.stringify(favorites));
+        renderFavorites();
+        updateStarButtonState();
+      } else {
+        // Open Name prompt dialog
+        dialogFavName.value = getDomainLabel(url).split(".")[0];
+        dialogFavUrl.value = url;
+        addFavoriteDialog.style.display = "flex";
+        dialogFavName.focus();
+      }
+    }
+
+    function closeAddFavoriteDialog() {
+      addFavoriteDialog.style.display = "none";
+    }
+
+    function confirmAddFavorite() {
+      const name = dialogFavName.value.trim() || "Web Site";
+      const url = dialogFavUrl.value.trim();
+      if (url) {
+        favorites.push({ name, url });
+        localStorage.setItem("access_favorites", JSON.stringify(favorites));
+        renderFavorites();
+        updateStarButtonState();
+      }
+      closeAddFavoriteDialog();
+    }
+
+    function updateStarButtonState() {
+      const activeTab = getActiveTab();
+      if (activeTab && activeTab.url && favorites.some(f => f.url === activeTab.url)) {
+        chromeStarBtn.classList.add("starred");
+        chromeStarBtn.title = "Starred bookmark (Click to remove)";
+      } else {
+        chromeStarBtn.classList.remove("starred");
+        chromeStarBtn.title = "Click to bookmark";
+      }
+    }
+
+    // Tab State Management functions
+    function getActiveTab() {
+      return tabs.find(t => t.id === activeTabId);
+    }
+
+    function addNewTab() {
+      const id = tabIdCounter++;
+      const newTab = {
+        id: id,
+        title: "New Tab",
+        url: "",
+        history: [],
+        historyIndex: -1,
+        proxyMode: "proxy",
+        lastCheckedRawUrl: ""
+      };
+      tabs.push(newTab);
+      selectTab(id);
+    }
+
+    function selectTab(id) {
+      activeTabId = id;
+      renderTabs();
+
+      const activeTab = getActiveTab();
+      if (!activeTab) return;
+
+      // Update Toolbar Inputs with active tab details
+      chromeProxySelect.value = activeTab.proxyMode;
+      chromeAddressInput.value = activeTab.lastCheckedRawUrl || activeTab.url || "";
+
+      // Update Tab frame contents
+      if (!activeTab.url) {
+        // Show New Tab page view
+        iframe.src = "about:blank";
+        chromeNewTabScreen.style.display = "flex";
+        iframeFallbackContainer.style.display = "none";
+      } else {
+        // Load in active frame
+        chromeNewTabScreen.style.display = "none";
+        iframeFallbackContainer.style.display = "none";
+        loadFrameSrc(activeTab);
+      }
+
+      updateStarButtonState();
+      updateNavButtonsState();
+    }
+
+    function closeTab(id, event) {
+      if (event) event.stopPropagation();
+
+      const tabIdx = tabs.findIndex(t => t.id === id);
+      if (tabIdx === -1) return;
+
+      // Ensure we don't close the last tab
+      if (tabs.length === 1) {
+        tabs = [];
+        addNewTab();
+        return;
+      }
+
+      tabs.splice(tabIdx, 1);
+
+      if (activeTabId === id) {
+        const nextActiveIdx = Math.max(0, tabIdx - 1);
+        selectTab(tabs[nextActiveIdx].id);
+      } else {
+        renderTabs();
+      }
+    }
+
+    function renderTabs() {
+      chromeTabsList.innerHTML = "";
+      tabs.forEach(tab => {
+        const tabEl = document.createElement("div");
+        tabEl.className = `chrome-tab ${tab.id === activeTabId ? 'active' : ''}`;
+        tabEl.onclick = () => selectTab(tab.id);
+
+        const tabIcon = document.createElement("span");
+        tabIcon.className = "chrome-tab-icon";
+        tabIcon.textContent = tab.url ? "🌐" : "📄";
+
+        const tabTitle = document.createElement("span");
+        tabTitle.className = "chrome-tab-title";
+        tabTitle.textContent = tab.title;
+
+        const tabClose = document.createElement("span");
+        tabClose.className = "chrome-tab-close";
+        tabClose.textContent = "×";
+        tabClose.onclick = (e) => closeTab(tab.id, e);
+
+        tabEl.appendChild(tabIcon);
+        tabEl.appendChild(tabTitle);
+        tabEl.appendChild(tabClose);
+        chromeTabsList.appendChild(tabEl);
+      });
+    }
+
+    function updateNavButtonsState() {
+      const activeTab = getActiveTab();
+      const backBtn = document.getElementById("chromeBackBtn");
+      const forwardBtn = document.getElementById("chromeForwardBtn");
+
+      if (activeTab) {
+        backBtn.disabled = activeTab.historyIndex <= 0;
+        forwardBtn.disabled = activeTab.historyIndex >= activeTab.history.length - 1;
+      } else {
+        backBtn.disabled = true;
+        forwardBtn.disabled = true;
+      }
+    }
+
+    // Address input logic & searches inside active tab
+    chromeAddressInput.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") {
+        navigateToAddress(chromeAddressInput.value);
+      }
+    });
+
+    newtabSearchInput.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") {
+        navigateToAddress(newtabSearchInput.value);
+      }
+    });
 
     urlInput.addEventListener("keypress", function(e) {
       if (e.key === "Enter") {
@@ -555,58 +1387,121 @@
       }
     });
 
-    function getFormattedUrl(value) {
+    function navigateToAddress(rawVal) {
+      const activeTab = getActiveTab();
+      if (!activeTab || !rawVal.trim()) return;
+
+      const formatted = getFormattedUrl(rawVal.trim(), engineSelect.value);
+      activeTab.lastCheckedRawUrl = rawVal.trim();
+
+      // Update history stack
+      if (activeTab.historyIndex === -1 || activeTab.history[activeTab.historyIndex] !== formatted) {
+        activeTab.history = activeTab.history.slice(0, activeTab.historyIndex + 1);
+        activeTab.history.push(formatted);
+        activeTab.historyIndex++;
+      }
+
+      activeTab.url = formatted;
+      activeTab.title = getDomainLabel(formatted);
+
+      chromeNewTabScreen.style.display = "none";
+      renderTabs();
+      loadFrameSrc(activeTab);
+      updateStarButtonState();
+      updateNavButtonsState();
+      showIframe();
+    }
+
+    function loadFrameSrc(tab) {
+      let finalSrc = tab.url;
+
+      if (tab.proxyMode === "proxy") {
+        finalSrc = "https://corsproxy.io/?" + encodeURIComponent(tab.url);
+      } else if (tab.proxyMode === "allorigins") {
+        finalSrc = "https://api.allorigins.win/raw?url=" + encodeURIComponent(tab.url);
+      }
+
+      iframe.src = finalSrc;
+      chromeAddressInput.value = tab.lastCheckedRawUrl || tab.url;
+
+      // Smart Fallback Overlay trigger
+      // Many sites block framing natively. We trigger a helper warning after loading direct mode.
+      if (tab.proxyMode === "direct") {
+        iframeFallbackContainer.style.display = "flex";
+      } else {
+        iframeFallbackContainer.style.display = "none";
+      }
+    }
+
+    function changeProxyEngine() {
+      const activeTab = getActiveTab();
+      if (!activeTab) return;
+      activeTab.proxyMode = chromeProxySelect.value;
+      if (activeTab.url) {
+        loadFrameSrc(activeTab);
+      }
+    }
+
+    function toggleAdBlock() {
+      isAdBlockerActive = !isAdBlockerActive;
+      if (isAdBlockerActive) {
+        chromeAdBlockBtn.classList.remove("disabled");
+        chromeAdBlockBtn.textContent = "🛡️ Shield: ON";
+        chromeAdBlockBtn.title = "Simulated Ad Blocking Active";
+      } else {
+        chromeAdBlockBtn.classList.add("disabled");
+        chromeAdBlockBtn.textContent = "🛡️ Shield: OFF";
+        chromeAdBlockBtn.title = "Simulated Ad Blocking Disabled";
+      }
+    }
+
+    // Classic Navigation Mapping functions for compatibility
+    function getFormattedUrl(value, engine) {
       if (!value) return "";
       let url = value;
-      
+
       if (!/^https?:\/\//i.test(value)) {
         if (value.includes(".") && !value.includes(" ")) {
           url = "https://" + value;
         } else {
-          const engine = engineSelect.value;
+          const currentEngine = engine || "google";
           const query = encodeURIComponent(value);
-
-          if (engine === "google") {
+          if (currentEngine === "google") {
             url = "https://www.google.com/search?q=" + query;
-          } else if (engine === "duckduckgo") {
+          } else if (currentEngine === "duckduckgo") {
             url = "https://duckduckgo.com/?q=" + query;
           } else {
             url = "https://www.bing.com/search?q=" + query;
           }
         }
       }
-
-      // Bypass X-Frame restrictions using corsproxy
-      if (engineSelect.value === "proxy") {
-        return "https://corsproxy.io/?" + encodeURIComponent(url);
-      }
       return url;
     }
 
     function loadUrl(targetUrl) {
-      urlInput.value = targetUrl;
-      currentTargetUrl = targetUrl;
-      
-      if (engineSelect.value === "proxy") {
-        iframe.src = "https://corsproxy.io/?" + encodeURIComponent(targetUrl);
-      } else {
-        iframe.src = targetUrl;
-      }
-      
-      currentUrlLabel.textContent = targetUrl;
+      // Ensure browser container is open and active
       showIframe();
+
+      // Open in currently active tab, or add one if empty New Tab is focused
+      const activeTab = getActiveTab();
+      if (activeTab) {
+        activeTab.lastCheckedRawUrl = targetUrl;
+
+        if (activeTab.historyIndex === -1 || activeTab.history[activeTab.historyIndex] !== targetUrl) {
+          activeTab.history = activeTab.history.slice(0, activeTab.historyIndex + 1);
+          activeTab.history.push(targetUrl);
+          activeTab.historyIndex++;
+        }
+        activeTab.url = targetUrl;
+        activeTab.title = getDomainLabel(targetUrl);
+        selectTab(activeTab.id);
+      }
     }
 
     function openSite() {
       let value = urlInput.value.trim();
       if (!value) return;
-
-      let targetUrl = getFormattedUrl(value);
-      currentTargetUrl = targetUrl;
-
-      iframe.src = targetUrl;
-      currentUrlLabel.textContent = targetUrl;
-      showIframe();
+      navigateToAddress(value);
     }
 
     function openSameTab() {
@@ -628,14 +1523,32 @@
     }
 
     function openCurrentInTab() {
-      if (currentTargetUrl) {
-        window.location.href = currentTargetUrl;
+      const activeTab = getActiveTab();
+      if (activeTab && activeTab.url) {
+        window.location.href = activeTab.url;
+      }
+    }
+
+    function openInNewTab() {
+      const activeTab = getActiveTab();
+      if (activeTab && activeTab.url) {
+        window.open(activeTab.url, "_blank");
       }
     }
 
     function reloadFrame() {
       if (iframe.src) {
         iframe.src = iframe.src;
+      }
+    }
+
+    function goHome() {
+      const activeTab = getActiveTab();
+      if (activeTab) {
+        activeTab.url = "";
+        activeTab.lastCheckedRawUrl = "";
+        activeTab.title = "New Tab";
+        selectTab(activeTab.id);
       }
     }
 
@@ -661,23 +1574,39 @@
     }
 
     function showIframe() {
-      container.style.display = "block";
+      container.style.display = "flex";
       container.scrollIntoView({ behavior: "smooth" });
     }
 
     function goBack() {
-      try {
-        iframe.contentWindow.history.back();
-      } catch(e) {
-        console.warn("History restricted.");
+      const activeTab = getActiveTab();
+      if (activeTab && activeTab.historyIndex > 0) {
+        activeTab.historyIndex--;
+        activeTab.url = activeTab.history[activeTab.historyIndex];
+        activeTab.title = getDomainLabel(activeTab.url);
+        selectTab(activeTab.id);
+      } else {
+        try {
+          iframe.contentWindow.history.back();
+        } catch(e) {
+          console.warn("History restricted.");
+        }
       }
     }
 
     function goForward() {
-      try {
-        iframe.contentWindow.history.forward();
-      } catch(e) {
-        console.warn("History restricted.");
+      const activeTab = getActiveTab();
+      if (activeTab && activeTab.historyIndex < activeTab.history.length - 1) {
+        activeTab.historyIndex++;
+        activeTab.url = activeTab.history[activeTab.historyIndex];
+        activeTab.title = getDomainLabel(activeTab.url);
+        selectTab(activeTab.id);
+      } else {
+        try {
+          iframe.contentWindow.history.forward();
+        } catch(e) {
+          console.warn("History restricted.");
+        }
       }
     }
 
@@ -687,12 +1616,90 @@
       if (body.getAttribute("data-theme") === "light") {
         body.removeAttribute("data-theme");
         btn.textContent = "Light theme";
+        localStorage.setItem("access_theme", "dark");
       } else {
         body.setAttribute("data-theme", "light");
         btn.textContent = "Dark theme";
+        localStorage.setItem("access_theme", "light");
       }
     }
-  </script>
 
+    // Bypass Option actions
+    function tryWithProxy() {
+      const activeTab = getActiveTab();
+      if (activeTab) {
+        activeTab.proxyMode = "proxy";
+        chromeProxySelect.value = "proxy";
+        loadFrameSrc(activeTab);
+      }
+    }
+
+    function dismissFallback() {
+      iframeFallbackContainer.style.display = "none";
+    }
+
+    function dismissTipBanner() {
+      document.getElementById("chromeTipBanner").style.display = "none";
+    }
+
+    // Keyboard Shortcuts and Remote controller focus key event
+    function setupKeyboardShortcuts() {
+      document.addEventListener("keydown", (e) => {
+        // Close frame on Escape key
+        if (e.key === "Escape") {
+          closeFrame();
+        }
+
+        // Alt + T: Open New Tab
+        if (e.altKey && e.key.toLowerCase() === "t") {
+          e.preventDefault();
+          addNewTab();
+        }
+
+        // Alt + W: Close Active Tab
+        if (e.altKey && e.key.toLowerCase() === "w") {
+          e.preventDefault();
+          const activeTab = getActiveTab();
+          if (activeTab) {
+            closeTab(activeTab.id);
+          }
+        }
+
+        // Alt + R: Reload
+        if (e.altKey && e.key.toLowerCase() === "r") {
+          e.preventDefault();
+          reloadFrame();
+        }
+
+        // Arrow Key / Remote Navigation when frame viewer is closed
+        const isFrameVisible = container.style.display === "flex";
+        const isDialogVisible = addFavoriteDialog.style.display === "flex";
+        if (!isFrameVisible && !isDialogVisible) {
+          const cards = document.querySelectorAll(".site-card");
+          if (cards.length > 0) {
+            if (e.key === "ArrowRight") {
+              remoteSelectedIndex = (remoteSelectedIndex + 1) % cards.length;
+              cards[remoteSelectedIndex].focus();
+              e.preventDefault();
+            } else if (e.key === "ArrowLeft") {
+              if (remoteSelectedIndex <= 0) {
+                remoteSelectedIndex = cards.length - 1;
+              } else {
+                remoteSelectedIndex--;
+              }
+              cards[remoteSelectedIndex].focus();
+              e.preventDefault();
+            } else if (e.key === "Enter" && remoteSelectedIndex !== -1) {
+              if (document.activeElement === cards[remoteSelectedIndex]) {
+                // Let the natural click event fire, or click it
+                cards[remoteSelectedIndex].click();
+                e.preventDefault();
+              }
+            }
+          }
+        }
+      });
+    }
+  </script>
 </body>
 </html>
