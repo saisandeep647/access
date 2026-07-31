@@ -1,0 +1,1629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Access — Privacy Launchpad & Frame Viewer</title>
+  <meta name="description" content="Combined access private search dashboard, unblocked multi-engine launcher, and access frame viewer with clean HTML sandboxing and session history tracking.">
+  <link rel="shortcut icon" href="https://duckduckgo.com/favicon.ico" type="image/x-icon">
+
+  <!-- Modern Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    /* ==========================================================================
+       DUCKDUCKGO + ACCESS HYBRID LAUNCHPAD - STYLESHEET
+       ========================================================================== */
+    :root {
+      --bg-color: #080b18;
+      --bg-gradient: radial-gradient(circle at 10% 15%, rgba(222, 88, 51, 0.15) 0%, transparent 40%),
+                    radial-gradient(circle at 85% 85%, rgba(139, 92, 246, 0.15) 0%, transparent 45%),
+                    radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.08) 0%, transparent 60%);
+      --card-bg: rgba(22, 27, 46, 0.7);
+      --card-bg-hover: rgba(30, 37, 66, 0.9);
+      --card-border: rgba(255, 255, 255, 0.09);
+      --card-border-hover: rgba(222, 88, 51, 0.4);
+
+      --text-primary: #ffffff;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+
+      --ddg-orange: #de5833;
+      --ddg-orange-hover: #f06a43;
+      --accent: #8b5cf6;
+      --accent-light: #a78bfa;
+      --accent-glow: rgba(222, 88, 51, 0.35);
+
+      --btn-primary: linear-gradient(135deg, #de5833 0%, #c4431f 100%);
+      --btn-primary-hover: linear-gradient(135deg, #f06a43 0%, #d84f29 100%);
+      --btn-secondary: rgba(255, 255, 255, 0.06);
+      --btn-secondary-hover: rgba(255, 255, 255, 0.12);
+
+      --input-bg: rgba(12, 16, 31, 0.88);
+
+      --chrome-bg: #111528;
+      --chrome-sub-bg: #0b0e1b;
+      --chrome-tab-active: #1a203a;
+      --chrome-tab-inactive: rgba(255, 255, 255, 0.04);
+
+      --status-online: #10b981;
+      --status-offline: #ef4444;
+
+      --shadow-main: 0 20px 40px rgba(0, 0, 0, 0.55);
+      --radius-lg: 20px;
+      --radius-md: 14px;
+      --radius-sm: 8px;
+
+      --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    [data-theme="light"] {
+      --bg-color: #f8fafc;
+      --bg-gradient: radial-gradient(circle at 10% 15%, rgba(222, 88, 51, 0.08) 0%, transparent 40%),
+                    radial-gradient(circle at 85% 85%, rgba(124, 58, 237, 0.08) 0%, transparent 45%);
+      --card-bg: rgba(255, 255, 255, 0.85);
+      --card-bg-hover: #ffffff;
+      --card-border: rgba(226, 232, 240, 0.85);
+      --card-border-hover: rgba(222, 88, 51, 0.4);
+
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #94a3b8;
+
+      --accent: #de5833;
+      --accent-light: #f06a43;
+      --accent-glow: rgba(222, 88, 51, 0.2);
+
+      --btn-primary: linear-gradient(135deg, #de5833 0%, #c4431f 100%);
+      --btn-secondary: rgba(0, 0, 0, 0.05);
+      --btn-secondary-hover: rgba(0, 0, 0, 0.09);
+
+      --input-bg: #ffffff;
+
+      --chrome-bg: #e2e8f0;
+      --chrome-sub-bg: #f1f5f9;
+      --chrome-tab-active: #ffffff;
+      --chrome-tab-inactive: rgba(0, 0, 0, 0.05);
+
+      --shadow-main: 0 15px 35px rgba(0, 0, 0, 0.09);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      background-color: var(--bg-color);
+      background-image: var(--bg-gradient);
+      color: var(--text-primary);
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      overflow-x: hidden;
+      transition: background-color var(--transition-normal), color var(--transition-normal);
+      line-height: 1.5;
+    }
+
+    .bg-blur-orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(100px);
+      z-index: -1;
+      pointer-events: none;
+      opacity: 0.45;
+    }
+    .orb-1 { width: 450px; height: 450px; top: -100px; left: -100px; background: var(--ddg-orange); }
+    .orb-2 { width: 500px; height: 500px; bottom: -150px; right: -150px; background: #6366f1; }
+    .orb-3 { width: 300px; height: 300px; top: 40%; left: 50%; transform: translate(-50%, -50%); background: #10b981; opacity: 0.12; }
+
+    .app-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 32px 24px;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* Header Styling */
+    .app-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 36px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .brand { display: flex; align-items: center; gap: 14px; text-decoration: none; color: inherit; }
+
+    .ddg-logo-icon {
+      width: 48px;
+      height: 48px;
+      background: #ffffff;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      box-shadow: 0 4px 20px var(--accent-glow);
+      position: relative;
+    }
+
+    .brand-text { display: flex; flex-direction: column; }
+    .brand-name { font-size: 20px; font-weight: 800; letter-spacing: -0.5px; display: flex; align-items: center; gap: 8px; }
+    .brand-badge { background: rgba(222, 88, 51, 0.15); color: #f87171; font-size: 11px; padding: 2px 9px; border-radius: 12px; border: 1px solid rgba(222, 88, 51, 0.35); font-weight: 700; }
+    .brand-tagline { font-size: 12px; color: var(--text-secondary); }
+
+    .header-actions { display: flex; align-items: center; gap: 10px; }
+
+    .icon-btn {
+      position: relative;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      color: var(--text-primary);
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+      transition: all var(--transition-fast);
+    }
+    .icon-btn:hover { border-color: var(--ddg-orange); background: var(--card-bg-hover); transform: translateY(-1px); }
+
+    .badge-count {
+      position: absolute;
+      top: -4px;
+      right: -4px;
+      background: var(--ddg-orange);
+      color: #ffffff;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 1px 5px;
+      border-radius: 10px;
+      border: 2px solid var(--bg-color);
+    }
+
+    .theme-toggle-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      color: var(--text-primary);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+      transition: all var(--transition-fast);
+    }
+    .theme-toggle-btn:hover { border-color: var(--ddg-orange); transform: translateY(-1px); }
+
+    /* Hero Section */
+    .hero-section {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 40px;
+    }
+
+    .ddg-hero-duck {
+      width: 90px;
+      height: 90px;
+      margin-bottom: 16px;
+      filter: drop-shadow(0 10px 20px rgba(222, 88, 51, 0.3));
+      animation: floatDuck 4s ease-in-out infinite;
+    }
+    @keyframes floatDuck {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-8px); }
+    }
+
+    .hero-title { font-size: clamp(30px, 4.5vw, 50px); font-weight: 800; line-height: 1.15; letter-spacing: -1.2px; margin-bottom: 14px; }
+
+    .gradient-text {
+      background: linear-gradient(135deg, #ffffff 30%, #ff8a65 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    [data-theme="light"] .gradient-text {
+      background: linear-gradient(135deg, #0f172a 30%, #de5833 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-subtitle { color: var(--text-secondary); font-size: 15px; max-width: 680px; margin-bottom: 28px; line-height: 1.6; }
+
+    /* Privacy Stats Row */
+    .privacy-stats-row {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 32px;
+      width: 100%;
+      max-width: 900px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .stat-card {
+      flex: 1;
+      min-width: 200px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-md);
+      padding: 14px 18px;
+      backdrop-filter: blur(12px);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-align: left;
+      transition: all var(--transition-fast);
+    }
+    .stat-card:hover { border-color: var(--card-border-hover); transform: translateY(-2px); }
+
+    .stat-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: rgba(222, 88, 51, 0.15);
+      color: var(--ddg-orange);
+      display: grid;
+      place-items: center;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .stat-info { display: flex; flex-direction: column; }
+    .stat-value { font-size: 18px; font-weight: 800; }
+    .stat-label { font-size: 11px; color: var(--text-secondary); }
+
+    /* Omnibox & Toolbar */
+    .toolbar-wrapper {
+      width: 100%;
+      max-width: 1000px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .omnibox-card {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--input-bg);
+      border: 1px solid var(--card-border);
+      padding: 8px 14px;
+      border-radius: 28px;
+      box-shadow: var(--shadow-main);
+      backdrop-filter: blur(16px);
+      transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+    }
+    .omnibox-card:focus-within {
+      border-color: var(--ddg-orange);
+      box-shadow: 0 0 25px var(--accent-glow);
+    }
+
+    .nav-controls { display: flex; align-items: center; gap: 4px; }
+    .nav-btn {
+      background: var(--btn-secondary);
+      border: 1px solid var(--card-border);
+      color: var(--text-primary);
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+    .nav-btn:hover { background: rgba(222, 88, 51, 0.2); border-color: var(--ddg-orange); }
+
+    .engine-selector-wrapper select {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      color: var(--text-primary);
+      padding: 8px 12px;
+      border-radius: 18px;
+      font-size: 13px;
+      font-weight: 600;
+      outline: none;
+      cursor: pointer;
+      transition: border-color var(--transition-fast);
+    }
+    .engine-selector-wrapper select:hover { border-color: var(--ddg-orange); }
+
+    .input-container { flex: 1; display: flex; align-items: center; gap: 10px; position: relative; }
+    .search-icon { color: var(--ddg-orange); }
+    .input-container input {
+      width: 100%;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text-primary);
+      font-size: 15px;
+      font-family: inherit;
+      font-weight: 500;
+    }
+    .input-container input::placeholder { color: var(--text-muted); }
+
+    .kb-badge {
+      background: var(--btn-secondary);
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      font-size: 11px;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 3px 8px;
+      border-radius: 6px;
+      white-space: nowrap;
+    }
+
+    .action-btn-group { display: flex; align-items: center; gap: 8px; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 18px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      transition: all var(--transition-fast);
+    }
+    .btn-primary { background: var(--btn-primary); color: #ffffff; box-shadow: 0 4px 15px var(--accent-glow); }
+    .btn-primary:hover { background: var(--btn-primary-hover); transform: scale(1.02); }
+    .btn-secondary { background: var(--btn-secondary); color: var(--text-primary); border: 1px solid var(--card-border); }
+    .btn-secondary:hover { background: var(--btn-secondary-hover); border-color: var(--ddg-orange); }
+
+    .engine-pills { display: flex; align-items: center; gap: 10px; font-size: 12px; flex-wrap: wrap; justify-content: center; }
+    .pill-label { color: var(--text-muted); }
+    .pill-badge { background: rgba(222, 88, 51, 0.15); color: #f87171; padding: 4px 12px; border-radius: 14px; font-weight: 600; border: 1px solid rgba(222, 88, 51, 0.3); }
+    .pill-hint { color: var(--text-secondary); }
+
+    /* Chrome Browser Multi-Tab Frame */
+    .browser-frame-wrapper {
+      width: 100%;
+      max-width: 1080px;
+      margin-top: 30px;
+      background: var(--chrome-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: var(--shadow-main);
+      animation: slideUp 0.3s ease-out;
+    }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+    .chrome-window-bar {
+      background: var(--chrome-sub-bg);
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    .window-dots { display: flex; align-items: center; gap: 8px; }
+    .dot { width: 12px; height: 12px; border-radius: 50%; cursor: pointer; transition: opacity 0.2s; }
+    .dot-close { background: #ff5f56; }
+    .dot-minimize { background: #ffbd2e; }
+    .dot-fullscreen { background: #27c93f; }
+
+    .chrome-tab-bar { display: flex; align-items: center; gap: 6px; flex: 1; overflow-x: auto; scrollbar-width: none; }
+    .chrome-tab-bar::-webkit-scrollbar { display: none; }
+
+    .chrome-tab {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--chrome-tab-inactive);
+      border: 1px solid var(--card-border);
+      color: var(--text-secondary);
+      padding: 6px 14px;
+      border-radius: 12px 12px 0 0;
+      font-size: 12px;
+      font-weight: 600;
+      max-width: 190px;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      white-space: nowrap;
+    }
+    .chrome-tab.active { background: var(--chrome-tab-active); color: var(--text-primary); border-bottom-color: transparent; }
+    .tab-close-icon { font-size: 11px; padding: 2px 4px; border-radius: 50%; color: var(--text-muted); }
+    .tab-close-icon:hover { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+
+    .new-tab-btn {
+      background: var(--btn-secondary);
+      border: 1px solid var(--card-border);
+      color: var(--text-primary);
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .new-tab-btn:hover { background: var(--ddg-orange); }
+
+    .frame-tools { display: flex; align-items: center; gap: 8px; }
+    .security-badge {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 12px;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .tool-btn {
+      background: var(--btn-secondary);
+      border: 1px solid var(--card-border);
+      color: var(--text-primary);
+      padding: 5px 12px;
+      border-radius: 14px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+    .tool-btn:hover { background: var(--ddg-orange); }
+    .exit-tool-btn { background: rgba(239, 68, 68, 0.15); border-color: rgba(239, 68, 68, 0.3); color: #fca5a5; }
+    .exit-tool-btn:hover { background: #dc2626; color: #ffffff; }
+
+    .frame-sub-bar {
+      background: var(--chrome-sub-bg);
+      padding: 6px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      border-bottom: 1px solid var(--card-border);
+    }
+    .frame-url-display {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-secondary);
+      max-width: 70%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .frame-status { display: flex; align-items: center; gap: 6px; color: var(--text-muted); font-size: 11px; }
+    .status-indicator { width: 8px; height: 8px; border-radius: 50%; background: var(--status-online); }
+
+    .iframe-viewport { position: relative; width: 100%; height: 72vh; background: #ffffff; transition: width var(--transition-normal); margin: 0 auto; }
+    .iframe-viewport.mobile-view { max-width: 414px; border-left: 2px solid var(--ddg-orange); border-right: 2px solid var(--ddg-orange); }
+
+    iframe#mainBrowserFrame { width: 100%; height: 100%; border: none; display: block; }
+
+    .iframe-loader {
+      position: absolute;
+      inset: 0;
+      background: var(--bg-color);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      color: var(--text-primary);
+      z-index: 10;
+      padding: 20px;
+      text-align: center;
+    }
+    .spinner {
+      width: 42px;
+      height: 42px;
+      border: 4px solid var(--card-border);
+      border-top-color: var(--ddg-orange);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Favorites Grid Section */
+    .favorites-section { width: 100%; margin-top: 40px; }
+
+    .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 16px; }
+    .section-title { font-size: 20px; font-weight: 800; letter-spacing: -0.5px; }
+    .section-desc { font-size: 13px; color: var(--text-secondary); }
+
+    .category-filters { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .cat-chip {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      color: var(--text-secondary);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+    .cat-chip:hover, .cat-chip.active { border-color: var(--ddg-orange); background: rgba(222, 88, 51, 0.18); color: var(--text-primary); }
+
+    .favorites-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
+
+    .site-card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 16px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      color: var(--text-primary);
+      backdrop-filter: blur(12px);
+      transition: all var(--transition-fast);
+      min-height: 115px;
+    }
+    .site-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--card-border-hover);
+      background: var(--card-bg-hover);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    }
+
+    .card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .card-icon-box {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, rgba(222, 88, 51, 0.2), rgba(139, 92, 246, 0.2));
+      border: 1px solid rgba(222, 88, 51, 0.3);
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      color: var(--ddg-orange);
+      font-weight: 800;
+      font-size: 13px;
+    }
+
+    .card-actions-menu { display: flex; align-items: center; gap: 6px; }
+    .card-action-btn {
+      background: var(--btn-secondary);
+      border: 1px solid var(--card-border);
+      color: var(--text-secondary);
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      font-size: 13px;
+      transition: all var(--transition-fast);
+    }
+    .card-action-btn:hover { background: var(--ddg-orange); color: #ffffff; border-color: var(--ddg-orange); }
+
+    .card-bottom { text-align: left; }
+    .site-title { display: block; font-size: 14px; font-weight: 700; margin-bottom: 2px; }
+    .site-domain { display: block; font-size: 11px; color: var(--text-secondary); }
+
+    .ping-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--status-online); display: inline-block; margin-right: 6px; }
+    .ping-dot.error { background: var(--status-offline); }
+
+    /* Footer */
+    .app-footer {
+      margin-top: auto;
+      padding-top: 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      color: var(--text-muted);
+      border-top: 1px solid var(--card-border);
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .dot-separator { margin: 0 8px; }
+    .footer-right { display: flex; gap: 16px; }
+    .footer-link-btn { background: none; border: none; color: var(--text-secondary); font-size: 12px; cursor: pointer; transition: color var(--transition-fast); }
+    .footer-link-btn:hover { color: var(--ddg-orange); }
+
+    /* Modal Overlay & Card */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(4, 6, 15, 0.78);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--transition-fast);
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: auto; }
+
+    .modal-card {
+      width: 100%;
+      max-width: 540px;
+      background: var(--bg-color);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-lg);
+      padding: 26px;
+      box-shadow: var(--shadow-main);
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .modal-title { font-size: 18px; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+    .close-modal { background: none; border: none; color: var(--text-muted); font-size: 18px; cursor: pointer; }
+    .close-modal:hover { color: var(--text-primary); }
+
+    .modal-body { overflow-y: auto; flex: 1; padding-right: 4px; }
+
+    /* History List Items */
+    .history-list { display: flex; flex-direction: column; gap: 10px; margin-top: 12px; }
+    .history-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      padding: 10px 14px;
+      border-radius: var(--radius-md);
+      gap: 12px;
+      transition: all var(--transition-fast);
+    }
+    .history-item:hover { border-color: var(--ddg-orange); background: var(--card-bg-hover); }
+
+    .hist-details { display: flex; flex-direction: column; overflow: hidden; flex: 1; }
+    .hist-title { font-size: 13px; font-weight: 700; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .hist-url { font-size: 11px; font-family: 'JetBrains Mono', monospace; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .hist-meta { font-size: 10px; color: var(--text-muted); display: flex; gap: 8px; align-items: center; margin-top: 2px; }
+    .hist-type-badge { background: rgba(222, 88, 51, 0.15); color: var(--ddg-orange); padding: 1px 6px; border-radius: 8px; font-weight: bold; }
+
+    .hist-actions { display: flex; align-items: center; gap: 6px; }
+    .hist-btn {
+      background: var(--btn-secondary);
+      border: 1px solid var(--card-border);
+      color: var(--text-secondary);
+      padding: 4px 8px;
+      border-radius: 8px;
+      font-size: 11px;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+    .hist-btn:hover { background: var(--ddg-orange); color: #ffffff; border-color: var(--ddg-orange); }
+    .hist-btn-del:hover { background: #dc2626; color: #ffffff; border-color: #dc2626; }
+
+    .shortcuts-list { display: flex; flex-direction: column; gap: 12px; }
+    .sc-item { display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
+    .sc-key { background: var(--btn-secondary); border: 1px solid var(--card-border); padding: 4px 10px; border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-weight: bold; }
+    .sc-desc { color: var(--text-secondary); }
+
+    @media (max-width: 768px) {
+      .hero-title { font-size: 30px; }
+      .omnibox-card { flex-wrap: wrap; padding: 12px; }
+      .input-container { order: 1; width: 100%; margin-top: 8px; }
+      .action-btn-group { order: 2; width: 100%; justify-content: space-between; margin-top: 8px; }
+      .chrome-window-bar { flex-wrap: wrap; }
+      .frame-tools { margin-left: auto; }
+      .privacy-stats-row { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background Orbs -->
+  <div class="bg-blur-orb orb-1"></div>
+  <div class="bg-blur-orb orb-2"></div>
+  <div class="bg-blur-orb orb-3"></div>
+
+  <div class="app-container">
+
+    <!-- Header -->
+    <header class="app-header">
+      <a href="https://duckduckgo.com/about" target="_blank" class="brand" title="Learn more about DuckDuckGo">
+        <div class="ddg-logo-icon">
+          <svg width="34" height="34" viewBox="0 0 48 48" fill="none">
+            <circle cx="24" cy="24" r="24" fill="#DE5833"/>
+            <path d="M34.5 25C34.5 30.5 29.8 35 24 35C18.2 35 13.5 30.5 13.5 25C13.5 22.8 14.3 20.8 15.6 19.2L20.8 24.5C21.2 24.9 21.8 25.1 22.4 25.1H27.6C28.2 25.1 28.8 24.9 29.2 24.5L34.4 19.2C35.7 20.8 36.5 22.8 36.5 25H34.5Z" fill="white"/>
+            <ellipse cx="19.5" cy="18.5" rx="2.5" ry="3.5" fill="#1C1C1C"/>
+            <ellipse cx="28.5" cy="18.5" rx="2.5" ry="3.5" fill="#1C1C1C"/>
+            <circle cx="20.2" cy="17.5" r="0.9" fill="white"/>
+            <circle cx="29.2" cy="17.5" r="0.9" fill="white"/>
+            <path d="M20 22C20 22 22 24 24 24C26 24 28 22 28 22" stroke="#FF9E1B" stroke-width="2.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-name">ACCESS ANY <span class="brand-badge">Access Hybrid v3.8</span></span>
+          <span class="brand-tagline">Private Search & Session History Manager</span>
+        </div>
+      </a>
+
+      <div class="header-actions">
+        <!-- History Tracker Button -->
+        <button class="icon-btn" id="historyBtn" title="Launchpad Session History (Ctrl+H)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span class="badge-count" id="historyBadgeCount">0</span>
+        </button>
+
+        <button class="icon-btn" id="aboutDdgBtn" title="About DuckDuckGo Privacy">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+        </button>
+
+        <button class="icon-btn" id="shortcutsBtn" title="Keyboard Shortcuts (Ctrl+/)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 3H6a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3h12a3 3 0 0 0 3-3V6a3 3 0 0 0-3-3z"/><path d="M8 8h.01"/><path d="M12 8h.01"/><path d="M16 8h.01"/><path d="M8 12h.01"/><path d="M12 12h.01"/><path d="M16 12h.01"/><path d="M8 16h8"/></svg>
+        </button>
+
+        <button class="theme-toggle-btn" id="themeToggle" title="Toggle Visual Theme">
+          <span class="theme-icon">🌙</span>
+          <span class="theme-text">Dark Mode</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Hero Section -->
+    <main class="hero-section">
+      
+      <!-- Dax Duck SVG Mascot -->
+      <svg class="ddg-hero-duck" viewBox="0 0 100 100" fill="none">
+        <circle cx="50" cy="50" r="48" fill="#DE5833"/>
+        <circle cx="50" cy="50" r="44" fill="url(#duckGrad)"/>
+        <path d="M72 54C72 66 62 76 50 76C38 76 28 66 28 54C28 49 30 44 33 40L44 51C45 52 47 53 49 53H51C53 53 55 52 56 51L67 40C70 44 72 49 72 54Z" fill="white"/>
+        <ellipse cx="40" cy="41" rx="5" ry="7" fill="#1A1A1A"/>
+        <ellipse cx="60" cy="41" rx="5" ry="7" fill="#1A1A1A"/>
+        <circle cx="41.5" cy="39" r="1.8" fill="white"/>
+        <circle cx="61.5" cy="39" r="1.8" fill="white"/>
+        <path d="M42 49C42 49 46 53 50 53C54 53 58 49 58 49" stroke="#FF9E1B" stroke-width="4" stroke-linecap="round"/>
+        <path d="M50 14C36 14 26 24 26 36C26 38 26.5 40 27 42C29 38 33 34 38 34C42 34 45 36 47 38C48 37 49 36 50 36C51 36 52 37 53 38C55 36 58 34 62 34C67 34 71 38 73 42C73.5 40 74 38 74 36C74 24 64 14 50 14Z" fill="#DE5833"/>
+        <defs>
+          <linearGradient id="duckGrad" x1="6" y1="6" x2="94" y2="94" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#E26542"/>
+            <stop offset="1" stop-color="#C5421E"/>
+          </linearGradient>
+        </defs>
+      </svg>
+
+      <h1 class="hero-title">
+        Search the web without being tracked.<br>
+        <span class="gradient-text">Unblocked Chrome Frame Launchpad</span>
+      </h1>
+      <p class="hero-subtitle">
+        Seamlessly blend DuckDuckGo private search with an interactive multi-tab Chrome browser simulator, frame-buster stripping sandbox, and session history management.
+      </p>
+
+      <!-- Privacy Stats Row -->
+      <div class="privacy-stats-row">
+        <div class="stat-card">
+          <div class="stat-icon">🛡️</div>
+          <div class="stat-info">
+            <span class="stat-value">100% Private</span>
+            <span class="stat-label">Zero Browser History Pollution</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">⚡</div>
+          <div class="stat-info">
+            <span class="stat-value">Clean Sandbox</span>
+            <span class="stat-label">Strips Frame-Busters</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">📜</div>
+          <div class="stat-info">
+            <span class="stat-value" id="statHistoryTotal">0 Session Logged</span>
+            <span class="stat-label">App Local History Store</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Advanced Navigation Toolbar & Omnibox -->
+      <div class="toolbar-wrapper">
+        <div class="omnibox-card">
+          
+          <!-- History Navigation -->
+          <div class="nav-controls">
+            <button class="nav-btn" id="btnBack" title="Go Back in Frame">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <button class="nav-btn" id="btnForward" title="Go Forward in Frame">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+            <button class="nav-btn" id="btnReload" title="Reload Frame">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21.5 2v6h-6"/><path d="M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+            </button>
+          </div>
+
+          <!-- Engine Selector -->
+          <div class="engine-selector-wrapper">
+            <select id="engineSelect" aria-label="Select Engine / Proxy Mode">
+              <option value="duckduckgo" selected>🦆 DuckDuckGo Private Search</option>
+              <option value="sandbox">⚡ HTML Clean Sandbox (Strips X-Frame Blocks)</option>
+              <option value="codetabs">🌐 CodeTabs Proxy Gateway</option>
+              <option value="allorigins">📄 AllOrigins Mirror</option>
+              <option value="popout">🚀 Chrome Standalone Window (100% Works)</option>
+              <option value="direct">🔗 Direct iFrame (No Proxy)</option>
+              <optgroup label="Search Engine Alternatives">
+                <option value="google">🔍 Google Search Embed (igu=1)</option>
+                <option value="bing">🔎 Bing Search Embed</option>
+                <option value="brave">🦁 Brave Search Embed</option>
+                <option value="youtube">▶ YouTube Video Search</option>
+              </optgroup>
+            </select>
+          </div>
+
+          <!-- Omnibox Search Input -->
+          <div class="input-container">
+            <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" id="urlInput" placeholder="Search the web without being tracked (e.g. duckduckgo.com, cinehd.app)..." autocomplete="off" spellcheck="false">
+            <span class="kb-badge">Ctrl+K</span>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="action-btn-group">
+            <button class="btn btn-primary" id="btnLoadFrame" title="Load website or search results into simulated Chrome frame">
+              <span>Load Frame</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+
+            <button class="btn btn-secondary" id="btnPopoutWindow" title="Open site in isolated native Chrome window (Bypasses all frame restrictions)">
+              <span>Popout ↗</span>
+            </button>
+          </div>
+
+        </div>
+
+        <!-- Engine Badges -->
+        <div class="engine-pills">
+          <span class="pill-label">Active Mode:</span>
+          <span class="pill-badge" id="activeModeBadge">🦆 DuckDuckGo Private Search</span>
+          <span class="pill-hint">💡 Press <strong>Ctrl+H</strong> to view session history!</span>
+        </div>
+      </div>
+
+      <!-- Simulated Chrome Multi-Tab Browser Frame -->
+      <section class="browser-frame-wrapper" id="browserFrameWrapper" style="display: none;">
+        
+        <!-- Window Bar Controls -->
+        <div class="chrome-window-bar">
+          <div class="window-dots">
+            <span class="dot dot-close" id="btnCloseFrame" title="Close Frame"></span>
+            <span class="dot dot-minimize" id="btnMinimizeFrame" title="Minimize Frame"></span>
+            <span class="dot dot-fullscreen" id="btnFullscreenFrame" title="Toggle Fullscreen"></span>
+          </div>
+
+          <!-- Dynamic Tabs -->
+          <div class="chrome-tab-bar" id="chromeTabBar"></div>
+
+          <button class="new-tab-btn" id="btnNewTab" title="Open New Frame Tab (Ctrl+T)">+</button>
+
+          <!-- Frame Tools -->
+          <div class="frame-tools">
+            <span class="security-badge" id="securityBadge">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              DDG Private Frame
+            </span>
+
+            <button class="tool-btn" id="btnDeviceView" title="Toggle Resolution (Desktop/Mobile)">📱 View</button>
+            <button class="tool-btn" id="btnOpenInTab" title="Open current URL in same browser tab">Same Tab 🔗</button>
+            <button class="tool-btn exit-tool-btn" id="btnExitFrame">Exit ✖</button>
+          </div>
+        </div>
+
+        <!-- Frame Address Bar -->
+        <div class="frame-sub-bar">
+          <span class="frame-url-display" id="frameUrlDisplay">https://html.duckduckgo.com</span>
+          <div class="frame-status">
+            <span class="status-indicator online"></span>
+            <span id="frameStatusText">Frame Active</span>
+          </div>
+        </div>
+
+        <!-- Frame Body -->
+        <div class="iframe-viewport" id="iframeViewport">
+          <div class="iframe-loader" id="iframeLoader" style="display: none;">
+            <div class="spinner"></div>
+            <p>Fetching content securely via sandbox...</p>
+            <button class="btn btn-primary" id="btnQuickPopoutFallback" style="margin-top: 10px; font-size: 12px;">🚀 Open Standalone Chrome Window (100% Works)</button>
+          </div>
+
+          <iframe id="mainBrowserFrame" allow="fullscreen; autoplay; encrypted-media; picture-in-picture; clipboard-write" sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-modals"></iframe>
+        </div>
+
+      </section>
+
+      <!-- Favorites Section -->
+      <section class="favorites-section">
+        <div class="section-header">
+          <div class="section-title-group">
+            <h2 class="section-title">ACCESS Favorites & Quick Launch</h2>
+            <p class="section-desc">Click any tile to load in frame, open in standalone window with ↗, or load in same tab with 🔗.</p>
+          </div>
+
+          <div class="category-filters" id="categoryFilters">
+            <button class="cat-chip active" data-cat="all">All Channels</button>
+            <button class="cat-chip" data-cat="search">🦆 DDG & Search</button>
+            <button class="cat-chip" data-cat="streaming">🎬 Streaming</button>
+            <button class="cat-chip" data-cat="access">⚡ Access Tools</button>
+            <button class="cat-chip" data-cat="dev">💻 Dev & Tech</button>
+          </div>
+        </div>
+
+        <div class="favorites-grid" id="favoritesGrid"></div>
+      </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <div class="footer-left">
+        <span>Access Launchpad</span>
+        <span class="dot-separator">•</span>
+        <span>Privacy Protection & Session History Store</span>
+      </div>
+      <div class="footer-right">
+        <button class="footer-link-btn" id="btnCheckPings">📡 Ping All Sites</button>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- Session History Modal -->
+  <div class="modal-overlay" id="historyModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#de5833" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Launchpad Session History
+        </h3>
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <button class="hist-btn hist-btn-del" id="btnClearHistory">Clear History</button>
+          <button class="close-modal" id="closeHistoryModal">✕</button>
+        </div>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">
+          Recorded session links, queries, and tabs opened in this launchpad:
+        </p>
+        <div class="history-list" id="historyListContainer">
+          <!-- Populated dynamically via JS -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Keyboard Shortcuts Modal -->
+  <div class="modal-overlay" id="shortcutsModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#de5833" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M6 8h.01"/><path d="M10 8h.01"/><path d="M14 8h.01"/><path d="M18 8h.01"/><path d="M8 12h.01"/><path d="M12 12h.01"/><path d="M16 12h.01"/><path d="M7 16h10"/></svg>
+          Keyboard Shortcuts
+        </h3>
+        <button class="close-modal" id="closeShortcutsModal">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="shortcuts-list">
+          <div class="sc-item"><span class="sc-key">Ctrl + K</span> <span class="sc-desc">Focus Search / Omnibox</span></div>
+          <div class="sc-item"><span class="sc-key">Ctrl + H</span> <span class="sc-desc">Open Session History Manager</span></div>
+          <div class="sc-item"><span class="sc-key">Ctrl + T</span> <span class="sc-desc">Open New Frame Tab</span></div>
+          <div class="sc-item"><span class="sc-key">Ctrl + W</span> <span class="sc-desc">Close Active Frame Tab</span></div>
+          <div class="sc-item"><span class="sc-key">Esc</span> <span class="sc-desc">Close Modals / Exit Fullscreen</span></div>
+          <div class="sc-item"><span class="sc-key">Enter</span> <span class="sc-desc">Execute Search / Load Frame</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- About DuckDuckGo Modal -->
+  <div class="modal-overlay" id="aboutModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">About ACCESS Privacy</h3>
+        <button class="close-modal" id="closeAboutModal">✕</button>
+      </div>
+      <div class="modal-body" style="font-size: 14px; color: var(--text-secondary); line-height: 1.6;">
+        <p style="margin-bottom: 12px;"><strong style="color: var(--text-primary);">DuckDuckGo</strong> is an independent internet privacy company that protects your search data from commercial profiling and tracking.</p>
+        <p style="margin-bottom: 12px;">This combined launchpad embeds DuckDuckGo's unblocked HTML search interface alongside clean HTML proxy sandboxing and local session history management.</p>
+        <div style="background: rgba(222, 88, 51, 0.1); border-left: 3px solid #de5833; padding: 10px 14px; border-radius: 6px; color: var(--text-primary); margin-top: 10px;">
+          🔒 No tracking cookies • Session history kept locally • Clean frame sandboxing
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Embedded Hybrid JS Engine -->
+  <script>
+    (function () {
+      'use strict';
+
+      const BOOKMARKS = [
+        { id: '1', title: 'DuckDuckGo Search', url: 'https://html.duckduckgo.com/html/', category: 'search', badge: '🦆' },
+        { id: '2', title: 'CineHD', url: 'https://cinehd.app/home', category: 'streaming', badge: 'CH' },
+        { id: '3', title: 'Redflix', url: 'https://redflix.club/', category: 'streaming', badge: 'RF' },
+        { id: '4', title: '5Movierulz', url: 'https://5movierulz.vote', category: 'streaming', badge: '5M' },
+        { id: '5', title: 'Net27', url: 'https://net27.cc', category: 'streaming', badge: 'N27' },
+        { id: '6', title: 'PVRPlay', url: 'https://pvrplay.in/', category: 'streaming', badge: 'PVR' },
+        { id: '7', title: 'Access Adsblock', url: 'https://saisandeep647.github.io/access/adsblock', category: 'access', badge: 'A1' },
+        { id: '8', title: 'Access V2', url: 'https://saisandeep647.github.io/access/access', category: 'access', badge: 'A2' },
+        { id: '9', title: 'GitHub', url: 'https://github.com', category: 'dev', badge: 'GH' },
+        { id: '10', title: 'Wikipedia', url: 'https://wikipedia.org', category: 'dev', badge: 'WP' },
+        { id: '11', title: 'YouTube', url: 'https://youtube.com', category: 'streaming', badge: 'YT' }
+      ];
+
+      let currentCategory = 'all';
+      let tabs = [];
+      let activeTabId = null;
+      let isMobileView = false;
+      let currentRawUrl = '';
+      let sessionHistory = [];
+
+      const urlInput = document.getElementById('urlInput');
+      const engineSelect = document.getElementById('engineSelect');
+      const btnLoadFrame = document.getElementById('btnLoadFrame');
+      const btnPopoutWindow = document.getElementById('btnPopoutWindow');
+      const btnBack = document.getElementById('btnBack');
+      const btnForward = document.getElementById('btnForward');
+      const btnReload = document.getElementById('btnReload');
+      const activeModeBadge = document.getElementById('activeModeBadge');
+
+      const browserFrameWrapper = document.getElementById('browserFrameWrapper');
+      const chromeTabBar = document.getElementById('chromeTabBar');
+      const btnNewTab = document.getElementById('btnNewTab');
+      const btnCloseFrame = document.getElementById('btnCloseFrame');
+      const btnMinimizeFrame = document.getElementById('btnMinimizeFrame');
+      const btnFullscreenFrame = document.getElementById('btnFullscreenFrame');
+      const btnDeviceView = document.getElementById('btnDeviceView');
+      const btnOpenInTab = document.getElementById('btnOpenInTab');
+      const btnExitFrame = document.getElementById('btnExitFrame');
+      const frameUrlDisplay = document.getElementById('frameUrlDisplay');
+      const iframeViewport = document.getElementById('iframeViewport');
+      const mainBrowserFrame = document.getElementById('mainBrowserFrame');
+      const iframeLoader = document.getElementById('iframeLoader');
+      const btnQuickPopoutFallback = document.getElementById('btnQuickPopoutFallback');
+
+      const favoritesGrid = document.getElementById('favoritesGrid');
+      const categoryFilters = document.getElementById('categoryFilters');
+
+      const historyModal = document.getElementById('historyModal');
+      const historyBtn = document.getElementById('historyBtn');
+      const closeHistoryModal = document.getElementById('closeHistoryModal');
+      const historyListContainer = document.getElementById('historyListContainer');
+      const historyBadgeCount = document.getElementById('historyBadgeCount');
+      const btnClearHistory = document.getElementById('btnClearHistory');
+      const statHistoryTotal = document.getElementById('statHistoryTotal');
+
+      const shortcutsModal = document.getElementById('shortcutsModal');
+      const shortcutsBtn = document.getElementById('shortcutsBtn');
+      const closeShortcutsModal = document.getElementById('closeShortcutsModal');
+
+      const aboutModal = document.getElementById('aboutModal');
+      const aboutDdgBtn = document.getElementById('aboutDdgBtn');
+      const closeAboutModal = document.getElementById('closeAboutModal');
+
+      const themeToggle = document.getElementById('themeToggle');
+      const btnCheckPings = document.getElementById('btnCheckPings');
+
+      function init() {
+        loadTheme();
+        loadHistory();
+        renderBookmarks();
+        setupEventListeners();
+        updateModeBadge();
+      }
+
+      function loadTheme() {
+        const savedTheme = localStorage.getItem('access_ddg_theme');
+        if (savedTheme === 'light') {
+          document.body.setAttribute('data-theme', 'light');
+          themeToggle.querySelector('.theme-icon').textContent = '☀️';
+          themeToggle.querySelector('.theme-text').textContent = 'Light Mode';
+        } else {
+          document.body.removeAttribute('data-theme');
+          themeToggle.querySelector('.theme-icon').textContent = '🌙';
+          themeToggle.querySelector('.theme-text').textContent = 'Dark Mode';
+        }
+      }
+
+      function toggleTheme() {
+        const isLight = document.body.getAttribute('data-theme') === 'light';
+        if (isLight) {
+          document.body.removeAttribute('data-theme');
+          localStorage.setItem('access_ddg_theme', 'dark');
+          themeToggle.querySelector('.theme-icon').textContent = '🌙';
+          themeToggle.querySelector('.theme-text').textContent = 'Dark Mode';
+        } else {
+          document.body.setAttribute('data-theme', 'light');
+          localStorage.setItem('access_ddg_theme', 'light');
+          themeToggle.querySelector('.theme-icon').textContent = '☀️';
+          themeToggle.querySelector('.theme-text').textContent = 'Light Mode';
+        }
+      }
+
+      /* History Management Logic */
+      function loadHistory() {
+        try {
+          const raw = localStorage.getItem('access_ddg_history');
+          sessionHistory = raw ? JSON.parse(raw) : [];
+        } catch (e) {
+          sessionHistory = [];
+        }
+        updateHistoryUI();
+      }
+
+      function recordHistory(url, title = '', launchType = 'Frame') {
+        if (!url) return;
+        const entry = {
+          id: 'hist_' + Date.now() + '_' + Math.floor(Math.random()*1000),
+          url: url,
+          title: title || extractDomain(url),
+          timestamp: new Date().toISOString(),
+          timeStr: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          launchType: launchType,
+          engine: engineSelect.value
+        };
+
+        sessionHistory = [entry, ...sessionHistory.filter(h => h.url !== url)].slice(0, 100);
+        localStorage.setItem('access_ddg_history', JSON.stringify(sessionHistory));
+        updateHistoryUI();
+      }
+
+      function updateHistoryUI() {
+        const total = sessionHistory.length;
+        historyBadgeCount.textContent = total;
+        statHistoryTotal.textContent = `${total} Session ${total === 1 ? 'Log' : 'Logs'}`;
+
+        if (total === 0) {
+          historyListContainer.innerHTML = '<div style="text-align: center; color: var(--text-muted); padding: 20px;">No session history recorded yet.</div>';
+          return;
+        }
+
+        historyListContainer.innerHTML = '';
+        sessionHistory.forEach(item => {
+          const el = document.createElement('div');
+          el.className = 'history-item';
+          el.innerHTML = `
+            <div class="hist-details">
+              <span class="hist-title">${escapeHtml(item.title)}</span>
+              <span class="hist-url">${escapeHtml(item.url)}</span>
+              <span class="hist-meta">
+                <span class="hist-type-badge">${escapeHtml(item.launchType)}</span>
+                <span>${escapeHtml(item.timeStr)}</span>
+              </span>
+            </div>
+            <div class="hist-actions">
+              <button class="hist-btn btn-open-frame" title="Open in Frame">Frame</button>
+              <button class="hist-btn btn-open-popout" title="Open in Popout Window">Popout ↗</button>
+              <button class="hist-btn btn-open-sametab" title="Open in Same Tab">Same Tab 🔗</button>
+              <button class="hist-btn hist-btn-del btn-del-item" title="Delete Item">✕</button>
+            </div>
+          `;
+
+          el.querySelector('.btn-open-frame').addEventListener('click', () => {
+            openInFrame(item.url, item.title);
+            historyModal.classList.remove('open');
+          });
+
+          el.querySelector('.btn-open-popout').addEventListener('click', () => {
+            launchPopoutWindow(item.url);
+          });
+
+          el.querySelector('.btn-open-sametab').addEventListener('click', () => {
+            openInSameTab(item.url);
+          });
+
+          el.querySelector('.btn-del-item').addEventListener('click', (e) => {
+            e.stopPropagation();
+            deleteHistoryItem(item.id);
+          });
+
+          historyListContainer.appendChild(el);
+        });
+      }
+
+      function deleteHistoryItem(id) {
+        sessionHistory = sessionHistory.filter(h => h.id !== id);
+        localStorage.setItem('access_ddg_history', JSON.stringify(sessionHistory));
+        updateHistoryUI();
+      }
+
+      function clearAllHistory() {
+        if (confirm('Clear all session history records?')) {
+          sessionHistory = [];
+          localStorage.removeItem('access_ddg_history');
+          updateHistoryUI();
+        }
+      }
+
+      function openInSameTab(url) {
+        if (!url) return;
+        const formatted = getFormattedUrl(url);
+        recordHistory(formatted, extractDomain(formatted), 'Same Tab');
+        window.location.href = formatted;
+      }
+
+      function getFormattedUrl(rawInput) {
+        if (!rawInput) return '';
+        let value = rawInput.trim();
+
+        if (!/^https?:\/\//i.test(value)) {
+          if (value.includes('.') && !value.includes(' ')) {
+            value = 'https://' + value;
+          } else {
+            const engine = engineSelect.value;
+            const query = encodeURIComponent(value);
+            if (engine === 'duckduckgo') return `https://html.duckduckgo.com/html/?q=${query}`;
+            if (engine === 'google') return `https://www.google.com/search?q=${query}&igu=1`;
+            if (engine === 'bing') return `https://www.bing.com/search?q=${query}`;
+            if (engine === 'brave') return `https://search.brave.com/search?q=${query}`;
+            if (engine === 'youtube') return `https://www.youtube.com/results?search_query=${query}`;
+            return `https://html.duckduckgo.com/html/?q=${query}`;
+          }
+        }
+
+        if (value.includes('google.com/search')) {
+          return value + (value.includes('?') ? '&igu=1' : '?igu=1');
+        }
+        if (value.includes('youtube.com/watch?v=')) {
+          return value.replace('watch?v=', 'embed/');
+        }
+        return value;
+      }
+
+      function updateModeBadge() {
+        const mode = engineSelect.value;
+        const labels = {
+          duckduckgo: '🦆 DuckDuckGo Private Search',
+          sandbox: '⚡ HTML Clean Sandbox Mode',
+          codetabs: '🌐 CodeTabs Proxy Mode',
+          allorigins: '📄 AllOrigins Mirror Mode',
+          popout: '🚀 Chrome Standalone Window Mode',
+          direct: '🔗 Direct iFrame Mode',
+          google: '🔍 Google Search Embed (igu=1)',
+          bing: '🔎 Bing Search Embed',
+          brave: '🦁 Brave Search Embed',
+          youtube: '▶ YouTube Search Embed'
+        };
+        activeModeBadge.textContent = labels[mode] || '🦆 DuckDuckGo Private Search';
+      }
+
+      async function loadCleanSandbox(targetUrl) {
+        iframeLoader.style.display = 'flex';
+        try {
+          const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
+          const res = await fetch(proxyUrl);
+          let html = await res.text();
+
+          const baseTag = `<base href="${targetUrl}">`;
+          if (html.includes('<head>')) {
+            html = html.replace('<head>', `<head>${baseTag}`);
+          } else {
+            html = baseTag + html;
+          }
+
+          html = html.replace(/if\s*\(\s*(self|window)\s*!==?\s*(top|parent)\s*\)/gi, 'if (false)');
+          html = html.replace(/(top|parent)\.location\s*=/gi, '// blocked_frame_buster =');
+
+          mainBrowserFrame.removeAttribute('src');
+          mainBrowserFrame.srcdoc = html;
+          iframeLoader.style.display = 'none';
+        } catch (err) {
+          console.warn('Sandbox fetch error, switching to direct proxy', err);
+          mainBrowserFrame.removeAttribute('srcdoc');
+          mainBrowserFrame.src = `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(targetUrl)}`;
+          iframeLoader.style.display = 'none';
+        }
+      }
+
+      function openInFrame(targetUrl, title = 'New Tab') {
+        const formattedUrl = getFormattedUrl(targetUrl);
+        if (!formattedUrl) return;
+
+        currentRawUrl = formattedUrl;
+        const engineMode = engineSelect.value;
+
+        recordHistory(formattedUrl, title !== 'New Tab' ? title : extractDomain(formattedUrl), 'Frame');
+
+        if (engineMode === 'popout') {
+          launchPopoutWindow(formattedUrl);
+          return;
+        }
+
+        browserFrameWrapper.style.display = 'block';
+        browserFrameWrapper.scrollIntoView({ behavior: 'smooth' });
+
+        const newTabId = 'tab_' + Date.now();
+        const tabObj = {
+          id: newTabId,
+          rawUrl: formattedUrl,
+          title: title !== 'New Tab' ? title : extractDomain(formattedUrl),
+          engine: engineMode
+        };
+
+        tabs.push(tabObj);
+        switchTab(newTabId);
+      }
+
+      function switchTab(tabId) {
+        const tab = tabs.find(t => t.id === tabId);
+        if (!tab) return;
+
+        activeTabId = tabId;
+        currentRawUrl = tab.rawUrl;
+        frameUrlDisplay.textContent = tab.rawUrl;
+        urlInput.value = tab.rawUrl;
+
+        const engineMode = engineSelect.value;
+
+        if (engineMode === 'sandbox') {
+          loadCleanSandbox(tab.rawUrl);
+        } else if (engineMode === 'allorigins') {
+          mainBrowserFrame.removeAttribute('srcdoc');
+          mainBrowserFrame.src = `https://api.allorigins.win/raw?url=${encodeURIComponent(tab.rawUrl)}`;
+          iframeLoader.style.display = 'none';
+        } else if (engineMode === 'codetabs') {
+          mainBrowserFrame.removeAttribute('srcdoc');
+          mainBrowserFrame.src = `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(tab.rawUrl)}`;
+          iframeLoader.style.display = 'none';
+        } else {
+          mainBrowserFrame.removeAttribute('srcdoc');
+          mainBrowserFrame.src = tab.rawUrl;
+          iframeLoader.style.display = 'none';
+        }
+
+        renderTabBar();
+      }
+
+      function closeTab(tabId, e) {
+        if (e) e.stopPropagation();
+        tabs = tabs.filter(t => t.id !== tabId);
+
+        if (tabs.length === 0) {
+          closeFrame();
+        } else {
+          if (activeTabId === tabId) {
+            switchTab(tabs[tabs.length - 1].id);
+          } else {
+            renderTabBar();
+          }
+        }
+      }
+
+      function renderTabBar() {
+        chromeTabBar.innerHTML = '';
+        tabs.forEach(tab => {
+          const tabEl = document.createElement('div');
+          tabEl.className = `chrome-tab ${tab.id === activeTabId ? 'active' : ''}`;
+          tabEl.innerHTML = `
+            <span>${escapeHtml(tab.title)}</span>
+            <span class="tab-close-icon" title="Close Tab">✕</span>
+          `;
+
+          tabEl.addEventListener('click', () => switchTab(tab.id));
+          tabEl.querySelector('.tab-close-icon').addEventListener('click', (e) => closeTab(tab.id, e));
+
+          chromeTabBar.appendChild(tabEl);
+        });
+      }
+
+      function closeFrame() {
+        tabs = [];
+        activeTabId = null;
+        mainBrowserFrame.src = 'about:blank';
+        mainBrowserFrame.removeAttribute('srcdoc');
+        browserFrameWrapper.style.display = 'none';
+      }
+
+      function launchPopoutWindow(url) {
+        const formatted = getFormattedUrl(url);
+        recordHistory(formatted, extractDomain(formatted), 'Popout ↗');
+        const width = 1280;
+        const height = 820;
+        const left = (screen.width - width) / 2;
+        const top = (screen.height - height) / 2;
+        window.open(formatted, '_blank', `width=${width},height=${height},top=${top},left=${left},resizable=yes,scrollbars=yes,status=yes`);
+      }
+
+      function renderBookmarks() {
+        favoritesGrid.innerHTML = '';
+
+        const filtered = currentCategory === 'all' 
+          ? BOOKMARKS 
+          : BOOKMARKS.filter(b => b.category === currentCategory);
+
+        filtered.forEach(b => {
+          const card = document.createElement('div');
+          card.className = 'site-card';
+          card.innerHTML = `
+            <div class="card-top">
+              <div class="card-icon-box">${escapeHtml(b.badge || b.title.substring(0,2).toUpperCase())}</div>
+              <div class="card-actions-menu">
+                <button class="card-action-btn btn-popout" title="Open Standalone Window ↗">↗</button>
+                <button class="card-action-btn btn-tab" title="Open Same Tab 🔗">🔗</button>
+              </div>
+            </div>
+            <div class="card-bottom">
+              <span class="site-title">${escapeHtml(b.title)}</span>
+              <span class="site-domain"><span class="ping-dot" id="ping_${b.id}"></span>${escapeHtml(extractDomain(b.url))}</span>
+            </div>
+          `;
+
+          card.addEventListener('click', (e) => {
+            if (e.target.closest('.card-action-btn')) return;
+            openInFrame(b.url, b.title);
+          });
+
+          card.querySelector('.btn-popout').addEventListener('click', (e) => {
+            e.stopPropagation();
+            launchPopoutWindow(b.url);
+          });
+
+          card.querySelector('.btn-tab').addEventListener('click', (e) => {
+            e.stopPropagation();
+            openInSameTab(b.url);
+          });
+
+          favoritesGrid.appendChild(card);
+        });
+      }
+
+      function pingSites() {
+        BOOKMARKS.forEach(b => {
+          const dot = document.getElementById(`ping_${b.id}`);
+          if (!dot) return;
+
+          fetch(b.url, { method: 'HEAD', mode: 'no-cors' })
+            .then(() => { dot.className = 'ping-dot'; })
+            .catch(() => { dot.className = 'ping-dot error'; });
+        });
+      }
+
+      function setupEventListeners() {
+        themeToggle.addEventListener('click', toggleTheme);
+
+        urlInput.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') {
+            const raw = urlInput.value.trim();
+            if (raw) openInFrame(raw);
+          }
+        });
+
+        btnLoadFrame.addEventListener('click', () => {
+          const raw = urlInput.value.trim();
+          if (raw) openInFrame(raw);
+        });
+
+        btnPopoutWindow.addEventListener('click', () => {
+          const raw = urlInput.value.trim();
+          if (raw) launchPopoutWindow(raw);
+        });
+
+        btnQuickPopoutFallback.addEventListener('click', () => {
+          if (currentRawUrl) launchPopoutWindow(currentRawUrl);
+        });
+
+        engineSelect.addEventListener('change', updateModeBadge);
+
+        btnBack.addEventListener('click', () => {
+          try { mainBrowserFrame.contentWindow.history.back(); } catch (err) { console.warn('Frame history restricted.'); }
+        });
+        btnForward.addEventListener('click', () => {
+          try { mainBrowserFrame.contentWindow.history.forward(); } catch (err) { console.warn('Frame history restricted.'); }
+        });
+        btnReload.addEventListener('click', () => {
+          if (activeTabId) switchTab(activeTabId);
+        });
+
+        btnNewTab.addEventListener('click', () => {
+          const query = prompt('Enter website URL or DuckDuckGo search query:');
+          if (query) openInFrame(query);
+        });
+        btnCloseFrame.addEventListener('click', closeFrame);
+        btnExitFrame.addEventListener('click', closeFrame);
+        btnMinimizeFrame.addEventListener('click', () => {
+          browserFrameWrapper.style.display = 'none';
+        });
+        btnFullscreenFrame.addEventListener('click', toggleFullscreen);
+
+        btnDeviceView.addEventListener('click', () => {
+          isMobileView = !isMobileView;
+          if (isMobileView) {
+            iframeViewport.classList.add('mobile-view');
+            btnDeviceView.textContent = '💻 Desktop';
+          } else {
+            iframeViewport.classList.remove('mobile-view');
+            btnDeviceView.textContent = '📱 View';
+          }
+        });
+
+        btnOpenInTab.addEventListener('click', () => {
+          if (frameUrlDisplay.textContent) {
+            openInSameTab(frameUrlDisplay.textContent);
+          }
+        });
+
+        categoryFilters.addEventListener('click', (e) => {
+          const chip = e.target.closest('.cat-chip');
+          if (!chip) return;
+
+          document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
+          chip.classList.add('active');
+          currentCategory = chip.dataset.cat;
+          renderBookmarks();
+        });
+
+        historyBtn.addEventListener('click', () => historyModal.classList.add('open'));
+        closeHistoryModal.addEventListener('click', () => historyModal.classList.remove('open'));
+        btnClearHistory.addEventListener('click', clearAllHistory);
+
+        shortcutsBtn.addEventListener('click', () => shortcutsModal.classList.add('open'));
+        closeShortcutsModal.addEventListener('click', () => shortcutsModal.classList.remove('open'));
+
+        aboutDdgBtn.addEventListener('click', () => aboutModal.classList.add('open'));
+        closeAboutModal.addEventListener('click', () => aboutModal.classList.remove('open'));
+
+        btnCheckPings.addEventListener('click', pingSites);
+
+        window.addEventListener('keydown', (e) => {
+          if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+            e.preventDefault();
+            urlInput.focus();
+            urlInput.select();
+          }
+          if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'h') {
+            e.preventDefault();
+            historyModal.classList.add('open');
+          }
+          if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 't') {
+            e.preventDefault();
+            const query = prompt('Enter URL or DuckDuckGo search query:');
+            if (query) openInFrame(query);
+          }
+          if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'w') {
+            e.preventDefault();
+            if (activeTabId) closeTab(activeTabId);
+          }
+          if (e.key === 'Escape') {
+            shortcutsModal.classList.remove('open');
+            aboutModal.classList.remove('open');
+            historyModal.classList.remove('open');
+          }
+        });
+      }
+
+      function extractDomain(url) {
+        try {
+          const parsed = new URL(url);
+          return parsed.hostname.replace(/^www\./, '');
+        } catch (e) {
+          return url;
+        }
+      }
+
+      function toggleFullscreen() {
+        if (!document.fullscreenElement) {
+          browserFrameWrapper.requestFullscreen().catch(err => console.warn(err));
+        } else {
+          document.exitFullscreen();
+        }
+      }
+
+      function escapeHtml(str) {
+        return String(str)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+      }
+
+      document.addEventListener('DOMContentLoaded', init);
+    })();
+  </script>
+</body>
+</html>
