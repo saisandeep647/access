@@ -3,144 +3,436 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ACCESS VERSION 3.O</title>
+    <title>QHP Multi-Store Dedicated Portal</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* --- General Body Styles --- */
-        body { 
-            background-color: #000; color: #fff; font-family: sans-serif; 
-            margin: 0; display: flex; flex-direction: column; 
-            align-items: center; min-height: 100vh; user-select: none; overflow-x: hidden;
-        }
-        h1 { margin-top: 30px; }
-
-        /* --- Search Bar Styles --- */
-        .search-wrapper { position: relative; width: 90%; max-width: 600px; margin-top: 20px; z-index: 1001; }
-        #search-input { 
-            width: 100%; padding: 14px; border-radius: 8px; border: 1px solid #444; 
-            background: #1a1a1a; color: #fff; box-sizing: border-box; font-size: 16px; outline: none; 
-        }
-        #search-input:focus { border-color: #fff; }
-        
-        #dropdown { 
-            position: absolute; top: 100%; left: 0; width: 100%; background: #222; 
-            border: 1px solid #444; border-radius: 0 0 8px 8px; display: none; 
-            overflow: hidden; box-shadow: 0px 4px 10px rgba(0,0,0,0.5); 
-        }
-        .dropdown-item { padding: 12px; cursor: pointer; color: #fff; border-bottom: 1px solid #333; display: flex; align-items: center; }
-        .dropdown-item:hover { background: #444; }
-        
-        /* --- Navigation Grid Styles --- */
-        .container {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 20px; width: 90%; max-width: 1000px; margin-top: 30px;
-        }
-        .card {
-            background: #1a1a1a; padding: 30px 20px; text-align: center; border-radius: 12px;
-            text-decoration: none; color: #fff; border: 2px solid #333;
-            transition: 0.2s; cursor: pointer; font-weight: bold; display: block; font-size: 16px;
-        }
-        .card:focus, .card:hover { background: #fff; color: #000; border-color: #fff; transform: scale(1.05); }
-
-        /* --- New Control Buttons --- */
-        .controls { display: flex; justify-content: center; gap: 10px; margin-top: 20px; }
-        .control-btn {
-            padding: 10px 20px; background: #333; color: #fff; border: 1px solid #444;
-            border-radius: 5px; cursor: pointer; font-weight: bold;
-        }
-        .control-btn:hover { background: #555; }
-
-        /* --- Web Frame Styles --- */
-        #frame-container {
-            width: 90%; max-width: 1000px; height: 600px; margin-top: 20px;
-            margin-bottom: 50px; border: 2px solid #444; border-radius: 10px; overflow: hidden; background: #111;
-        }
-        iframe { width: 100%; height: 100%; border: none; }
+        .drag-over { border-top: 2px solid #fc8019; }
     </style>
 </head>
-<body oncontextmenu="return false;">
+<body class="bg-slate-100 text-slate-800 pb-12 font-sans antialiased">
 
-    <h1>Dashboard</h1>
+    <!-- HEADER -->
+    <header id="mainHeader" class="bg-white sticky top-0 z-40 shadow-sm transition-colors duration-300 border-b-4 border-[#fc8019]">
+        <div class="max-w-6xl mx-auto px-4 py-3.5 flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <span id="logoBadge" class="bg-[#fc8019] text-white font-black px-4 py-2 rounded-xl text-xl tracking-wider shadow-sm flex items-center gap-1.5">
+                    QHP
+                </span>
+                <div>
+                    <h1 class="text-lg font-bold text-slate-900 leading-tight">Quick Helping Partner</h1>
+                    <p class="text-xs text-slate-500 font-medium">Multi-Store Dedicated Portal (Standalone HTML)</p>
+                </div>
+            </div>
+            <div id="headerSession" class="hidden flex items-center gap-2">
+                <span id="sessionBadge" class="text-xs font-bold px-3 py-1.5 rounded-xl bg-slate-100 text-slate-800">
+                    Logged in as: <strong id="sessionName"></strong>
+                </span>
+                <button onclick="logout()" class="px-3.5 py-1.5 bg-red-500 hover:bg-red-600 text-white font-bold text-xs rounded-xl transition-all shadow-sm">
+                    Logout
+                </button>
+            </div>
+        </div>
+    </header>
 
-    <div class="search-wrapper">
-        <input type="text" id="search-input" placeholder="Search the web or type a website..." autocomplete="off">
-        <div id="dropdown"></div>
-    </div>
+    <!-- MAIN CONTAINER -->
+    <main class="max-w-6xl mx-auto px-4 mt-7">
 
-    <div class="container">
-        <a href="https://www.google.com/webhp?igu=1" target="content-frame" class="card">Google</a>
-        <a href="https://www.wikipedia.org" target="content-frame" class="card">Wikipedia</a>
-        <a href="https://www.youtube.com" target="_blank" class="card">YouTube</a>
-        <a href="https://www.github.com" target="_blank" class="card">GitHub</a>
-        <a href="https://saisandeep647.github.io/access/adsblock" target="_blank" class="card">access</a>
-        <a href="https://saisandeep647.github.io/access/access" target="_blank" class="card">accessv2</a>
-         <a href="https://gofile.io/d/jTOG9m" target="_blank" class="card">pritam and pedro part 1</a>
-        <a href="https://gofile.io/d/OwuUvX" target="_blank" class="card">pritam and pedro part 2</a>
-        <button class="card" id="adblock-btn" onclick="toggleAdBlock()">Ad-Blocker: OFF</button>
-    </div>
+        <!-- AUTHENTICATION CARD -->
+        <div id="authSection" class="bg-white rounded-2xl p-7 shadow-lg border border-slate-200/80 mb-6">
+            <div class="flex gap-2 mb-6 bg-slate-100 p-1.5 rounded-xl max-w-sm">
+                <button id="tabLogin" onclick="switchAuthTab('login')" class="flex-1 py-2.5 px-4 rounded-lg font-bold text-xs transition-all bg-[#fc8019] text-white shadow-sm">
+                    Login
+                </button>
+                <button id="tabRegister" onclick="switchAuthTab('register')" class="flex-1 py-2.5 px-4 rounded-lg font-bold text-xs transition-all text-slate-600 hover:text-slate-900">
+                    Create New Account
+                </button>
+            </div>
 
-    <div class="controls">
-        <button class="control-btn" onclick="toggleFullScreen()">Full Screen</button>
-        <button class="control-btn" onclick="exitFullScreen()">Exit Full Screen</button>
-        <button class="control-btn" onclick="reloadFrame()">Reload Frame</button>
-    </div>
+            <!-- LOGIN FORM -->
+            <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="text-xs font-bold text-slate-700 block mb-1">Select Category To Login</label>
+                        <select id="loginCategory" onchange="updateThemeColor(this.value)" required class="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-sm bg-white">
+                            <option value="">-- Choose Category --</option>
+                            <option value="Restaurant">Restaurant</option>
+                            <option value="Store">Store</option>
+                            <option value="Groceries">Groceries</option>
+                            <option value="Parcel">Parcel</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-slate-700 block mb-1">Account / Business Name</label>
+                        <input type="text" id="loginStoreName" placeholder="e.g. Royal Restaurant" required class="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-sm" />
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-slate-700 block mb-1">Password</label>
+                        <input type="password" id="loginPassword" placeholder="••••••••" required class="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-sm" />
+                    </div>
+                </div>
+                <button type="submit" id="loginSubmitBtn" class="w-full py-3 px-6 bg-[#fc8019] text-white font-bold text-sm rounded-xl shadow-md hover:opacity-95 transition-all mt-4">
+                    Login To Portal
+                </button>
+            </form>
 
-    <div id="frame-container">
-        <!-- Added loading="lazy" for better performance on low-end devices -->
-        <iframe name="content-frame" src="about:blank" loading="lazy" title="Web Frame"></iframe>
+            <!-- REGISTER FORM -->
+            <form id="registerForm" onsubmit="handleRegister(event)" class="hidden space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div>
+                        <label class="text-xs font-bold text-slate-700 block mb-1">Select Account Category</label>
+                        <select id="regCategory" onchange="updateThemeColor(this.value)" required class="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-sm bg-white">
+                            <option value="">-- Choose Category --</option>
+                            <option value="Restaurant">Restaurant</option>
+                            <option value="Store">Store</option>
+                            <option value="Groceries">Groceries</option>
+                            <option value="Parcel">Parcel</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-slate-700 block mb-1">Mobile / Email</label>
+                        <input type="text" id="regContact" placeholder="9876543210" required class="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-sm" />
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-slate-700 block mb-1">Verification OTP</label>
+                        <div class="flex gap-2">
+                            <input type="text" id="regOtp" placeholder="OTP" required class="flex-1 px-3.5 py-2.5 border border-slate-200 rounded-xl text-sm" />
+                            <button type="button" onclick="sendOtp()" class="px-3 py-2 bg-slate-900 text-white font-bold text-xs rounded-xl whitespace-nowrap">
+                                Send OTP
+                            </button>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-slate-700 block mb-1">Account Name</label>
+                        <input type="text" id="regStoreName" placeholder="Sri Lakshmi Bakery" required class="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-sm" />
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-slate-700 block mb-1">Set Password</label>
+                        <input type="password" id="regPassword" placeholder="••••••••" required class="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-sm" />
+                    </div>
+                </div>
+                <button type="submit" id="regSubmitBtn" class="w-full py-3 px-6 bg-[#fc8019] text-white font-bold text-sm rounded-xl shadow-md hover:opacity-95 transition-all mt-4">
+                    Create Account & Register
+                </button>
+            </form>
+        </div>
+
+        <!-- DASHBOARD SECTION (Hidden by default) -->
+        <div id="dashboardSection" class="hidden">
+
+            <!-- ANALYTICS BAR -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
+                <div class="bg-white border border-slate-200/80 p-4 rounded-xl flex items-center justify-between shadow-xs">
+                    <div>
+                        <span class="text-[11px] font-bold uppercase text-slate-500 block">Total Items</span>
+                        <span id="statTotalItems" class="text-2xl font-black text-slate-900 mt-0.5 block">0</span>
+                    </div>
+                    <div class="p-2.5 bg-amber-500/10 text-amber-600 rounded-xl font-bold">📦</div>
+                </div>
+                <div class="bg-white border border-slate-200/80 p-4 rounded-xl flex items-center justify-between shadow-xs">
+                    <div>
+                        <span class="text-[11px] font-bold uppercase text-slate-500 block">Avg. Price</span>
+                        <span id="statAvgPrice" class="text-2xl font-black text-slate-900 mt-0.5 block">₹0</span>
+                    </div>
+                    <div class="p-2.5 bg-blue-500/10 text-blue-600 rounded-xl font-bold">🏷️</div>
+                </div>
+                <div class="bg-white border border-slate-200/80 p-4 rounded-xl flex items-center justify-between shadow-xs">
+                    <div>
+                        <span class="text-[11px] font-bold uppercase text-slate-500 block">Special Orders</span>
+                        <span id="statSpecialOrders" class="text-2xl font-black text-slate-900 mt-0.5 block">0</span>
+                    </div>
+                    <div class="p-2.5 bg-purple-500/10 text-purple-600 rounded-xl font-bold">⭐</div>
+                </div>
+            </div>
+
+            <!-- ADD ITEM FORM -->
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200/80 mb-6">
+                <h3 class="text-base font-bold text-slate-900 mb-4">➕ Add New Product / Service Item</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div>
+                        <label class="text-xs font-bold text-slate-700 block mb-1">Item Name</label>
+                        <input type="text" id="itemName" placeholder="e.g. Special Dosa" class="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-sm" />
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-slate-700 block mb-1">Price (₹)</label>
+                        <input type="number" id="itemPrice" placeholder="e.g. 80" class="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-sm" />
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-slate-700 block mb-1">Image Link (URL)</label>
+                        <input type="url" id="itemImage" placeholder="https://..." class="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-sm" />
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-slate-700 block mb-1">Discount Tag</label>
+                        <input type="text" id="itemDiscount" placeholder="10% OFF" class="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-sm" />
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-slate-700 block mb-1">Available Days</label>
+                        <select id="itemDays" class="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-sm bg-white">
+                            <option value="Everyday Ready">Everyday Ready</option>
+                            <option value="Weekdays Only">Weekdays Only</option>
+                            <option value="Weekends Only">Weekends Only</option>
+                            <option value="Sunday Special">Sunday Special</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-slate-700 block mb-1">Available Date</label>
+                        <input type="date" id="itemDate" class="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-sm bg-white" />
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-slate-700 block mb-1">Order Option</label>
+                        <select id="itemOrderType" class="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-sm bg-white">
+                            <option value="Regular">Regular Ready Item</option>
+                            <option value="Special Order">Special Order Item</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap gap-3 mt-6">
+                    <button onclick="generatePreview()" class="px-5 py-2.5 bg-slate-900 text-white font-bold text-xs rounded-xl">
+                        📋 Generate Draft Preview
+                    </button>
+                    <button id="publishBtn" onclick="publishItem()" class="px-6 py-2.5 bg-[#fc8019] text-white font-bold text-xs rounded-xl shadow-sm">
+                        🚀 Publish Item
+                    </button>
+                </div>
+
+                <!-- DRAFT PREVIEW BOX -->
+                <div id="draftBox" class="hidden mt-5 p-4 rounded-xl border-2 border-dashed border-[#fc8019] bg-slate-50">
+                    <h4 class="text-xs font-bold text-slate-800 uppercase mb-2">📋 Draft Preview</h4>
+                    <div class="flex items-center gap-4">
+                        <img id="draftImg" src="" alt="Draft" class="w-16 h-16 object-cover rounded-xl border border-slate-200 bg-slate-200" />
+                        <div class="text-xs text-slate-700">
+                            <p class="font-bold text-sm text-slate-900"><span id="draftTitle"></span> (₹<span id="draftPrice"></span>)</p>
+                            <p class="mt-0.5">Discount: <span id="draftDiscount"></span> | Date: <span id="draftDate"></span> (<span id="draftDays"></span>)</p>
+                            <p class="mt-0.5">Order Type: <span id="draftOrderType" class="px-2 py-0.5 rounded font-bold text-[10px] bg-blue-100 text-blue-800"></span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- INVENTORY TABLE -->
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200/80">
+                <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+                    <h3 class="text-base font-bold text-slate-900">
+                        📦 Items for <span id="activeStoreTitle" class="text-[#fc8019] font-extrabold"></span>
+                    </h3>
+                    <input type="text" id="tableSearch" onkeyup="renderTable()" placeholder="🔍 Search items..." class="w-full sm:w-64 px-3.5 py-2 border border-slate-200 rounded-xl text-xs" />
+                </div>
+
+                <div class="overflow-x-auto rounded-xl border border-slate-200">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50 border-b border-slate-200 text-[11px] font-bold text-slate-500 uppercase">
+                                <th class="p-3">Item Details</th>
+                                <th class="p-3">Price (₹)</th>
+                                <th class="p-3">Discount</th>
+                                <th class="p-3">Schedule</th>
+                                <th class="p-3">Type</th>
+                                <th class="p-3 text-right">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventoryTableBody" class="divide-y divide-slate-200 text-xs text-slate-700">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- CUSTOM MODAL -->
+    <div id="customModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-2xl p-7 text-center shadow-2xl">
+            <div id="modalIcon" class="text-4xl mb-3">⚠️</div>
+            <h3 id="modalTitle" class="text-lg font-bold text-slate-900 mb-2">Notice</h3>
+            <p id="modalMsg" class="text-sm text-slate-600 mb-6 leading-relaxed whitespace-pre-line"></p>
+            <button onclick="closeModal()" class="w-full py-2.5 px-4 bg-[#fc8019] text-white font-bold rounded-xl text-sm">OK</button>
+        </div>
     </div>
 
     <script>
-        // 1. Existing Security Logic
-        document.addEventListener('keydown', function(e) {
-            if (e.keyCode == 123 || (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74 || e.keyCode == 67)) || (e.ctrlKey && e.keyCode == 85) || (e.ctrlKey && e.keyCode == 83)) {
-                e.preventDefault(); return false;
-            }
-        });
+        const CATEGORY_COLORS = {
+            Restaurant: '#ff7a00',
+            Store: '#2563eb',
+            Groceries: '#16a34a',
+            Parcel: '#8b5cf6'
+        };
 
-        const sites = [
-            { name: "Google", url: "https://www.google.com/webhp?igu=1" },
-            { name: "Wikipedia", url: "https://www.wikipedia.org" },
-            { name: "YouTube", url: "https://www.youtube.com" },
-            { name: "GitHub", url: "https://www.github.com" }
+        let currentStore = null;
+        let currentCategory = null;
+        let itemsData = [
+            { id: 1, storeName: 'Royal Restaurant', category: 'Restaurant', name: 'Special Butter Dosa', price: 80, image: 'https://images.unsplash.com/photo-1668236543090-82eba5ee5976?w=300', discount: '10% OFF', days: 'Everyday Ready', date: '2026-08-06', orderType: 'Regular' },
+            { id: 2, storeName: 'Royal Restaurant', category: 'Restaurant', name: 'Chicken Biryani', price: 260, image: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=300', discount: 'Flat ₹30 OFF', days: 'Sunday Special', date: '2026-08-06', orderType: 'Special Order' }
         ];
 
-        const input = document.getElementById('search-input');
-        const contentFrame = document.querySelector('iframe[name="content-frame"]');
+        // Init default date picker to today
+        document.getElementById('itemDate').value = new Date().toISOString().split('T')[0];
 
-        input.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                const query = input.value.trim();
-                if (query) {
-                    // Net27.cc logic
-                    if (query.toLowerCase() === 'net27.cc') {
-                        contentFrame.src = "https://net27.cc/";
-                    } else {
-                        const exactMatch = sites.find(s => s.name.toLowerCase() === query.toLowerCase());
-                        if (exactMatch && exactMatch.name !== 'YouTube' && exactMatch.name !== 'GitHub') {
-                            contentFrame.src = exactMatch.url;
-                        } else {
-                            contentFrame.src = `https://www.google.com/search?q=${encodeURIComponent(query)}&igu=1`;
-                        }
-                    }
-                    input.value = '';
-                }
+        function updateThemeColor(category) {
+            const color = CATEGORY_COLORS[category] || '#fc8019';
+            document.getElementById('mainHeader').style.borderBottomColor = color;
+            document.getElementById('logoBadge').style.backgroundColor = color;
+            document.getElementById('loginSubmitBtn').style.backgroundColor = color;
+            document.getElementById('regSubmitBtn').style.backgroundColor = color;
+            document.getElementById('publishBtn').style.backgroundColor = color;
+        }
+
+        function switchAuthTab(tab) {
+            if (tab === 'login') {
+                document.getElementById('loginForm').classList.remove('hidden');
+                document.getElementById('registerForm').classList.add('hidden');
+                document.getElementById('tabLogin').className = "flex-1 py-2.5 px-4 rounded-lg font-bold text-xs transition-all bg-[#fc8019] text-white shadow-sm";
+                document.getElementById('tabRegister').className = "flex-1 py-2.5 px-4 rounded-lg font-bold text-xs transition-all text-slate-600 hover:text-slate-900";
+            } else {
+                document.getElementById('loginForm').classList.add('hidden');
+                document.getElementById('registerForm').classList.remove('hidden');
+                document.getElementById('tabRegister').className = "flex-1 py-2.5 px-4 rounded-lg font-bold text-xs transition-all bg-[#fc8019] text-white shadow-sm";
+                document.getElementById('tabLogin').className = "flex-1 py-2.5 px-4 rounded-lg font-bold text-xs transition-all text-slate-600 hover:text-slate-900";
             }
-        });
-
-        // 2. New Control Functions
-        function toggleFullScreen() {
-            if (!document.fullscreenElement) document.documentElement.requestFullscreen();
-        }
-        function exitFullScreen() {
-            if (document.fullscreenElement) document.exitFullscreen();
-        }
-        function reloadFrame() {
-            contentFrame.src = contentFrame.src;
         }
 
-        function toggleAdBlock() {
-            let btn = document.getElementById('adblock-btn');
-            btn.textContent = btn.textContent.includes("OFF") ? "Ad-Blocker: ON" : "Ad-Blocker: OFF";
+        function sendOtp() {
+            const contact = document.getElementById('regContact').value;
+            if (!contact) return showAlert('⚠️', 'Missing Contact', 'Enter mobile or email first!');
+            showAlert('📲', 'OTP Sent', 'QHP Verification code sent to: ' + contact + '\n(Demo OTP: 1234)');
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const cat = document.getElementById('loginCategory').value;
+            const name = document.getElementById('loginStoreName').value;
+            if (!cat) return showAlert('⚠️', 'Error', 'Select a Category first');
+            
+            currentStore = name;
+            currentCategory = cat;
+            enterDashboard();
+        }
+
+        function handleRegister(e) {
+            e.preventDefault();
+            const cat = document.getElementById('regCategory').value;
+            const name = document.getElementById('regStoreName').value;
+            if (!cat) return showAlert('⚠️', 'Error', 'Select a Category first');
+
+            currentStore = name;
+            currentCategory = cat;
+            enterDashboard();
+        }
+
+        function enterDashboard() {
+            document.getElementById('authSection').classList.add('hidden');
+            document.getElementById('dashboardSection').classList.remove('hidden');
+            document.getElementById('headerSession').classList.remove('hidden');
+            document.getElementById('sessionName').innerText = currentStore + ' (' + currentCategory + ')';
+            document.getElementById('activeStoreTitle').innerText = currentStore;
+            updateThemeColor(currentCategory);
+            renderTable();
+        }
+
+        function logout() {
+            currentStore = null;
+            currentCategory = null;
+            document.getElementById('authSection').classList.remove('hidden');
+            document.getElementById('dashboardSection').classList.add('hidden');
+            document.getElementById('headerSession').classList.add('hidden');
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('inventoryTableBody');
+            const search = document.getElementById('tableSearch').value.toLowerCase();
+            const filtered = itemsData.filter(i => i.storeName === currentStore && i.name.toLowerCase().includes(search));
+
+            let html = '';
+            let total = filtered.length;
+            let sumPrice = 0;
+            let specials = 0;
+
+            filtered.forEach(item => {
+                sumPrice += item.price;
+                if (item.orderType === 'Special Order') specials++;
+
+                html += `
+                    <tr class="hover:bg-slate-50">
+                        <td class="p-3">
+                            <div class="flex items-center gap-3">
+                                <img src="${item.image}" class="w-10 h-10 object-cover rounded-lg border" />
+                                <span class="font-semibold text-slate-900">${item.name}</span>
+                            </div>
+                        </td>
+                        <td class="p-3 font-semibold">₹${item.price}</td>
+                        <td class="p-3 text-amber-700 font-medium">${item.discount}</td>
+                        <td class="p-3">${item.days} (${item.date})</td>
+                        <td class="p-3"><span class="px-2 py-0.5 rounded text-[10px] font-bold ${item.orderType === 'Special Order' ? 'bg-amber-100 text-amber-800' : 'bg-blue-100 text-blue-800'}">${item.orderType}</span></td>
+                        <td class="p-3 text-right">
+                            <button onclick="deleteItem(${item.id})" class="px-2.5 py-1 bg-red-50 text-red-600 rounded font-bold text-xs border border-red-200">Remove</button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            tbody.innerHTML = html || '<tr><td colSpan="6" class="p-8 text-center text-slate-400">No items found.</td></tr>';
+            document.getElementById('statTotalItems').innerText = total;
+            document.getElementById('statAvgPrice').innerText = '₹' + (total > 0 ? (sumPrice / total).toFixed(1) : 0);
+            document.getElementById('statSpecialOrders').innerText = specials;
+        }
+
+        function generatePreview() {
+            const name = document.getElementById('itemName').value;
+            const price = document.getElementById('itemPrice').value;
+            const img = document.getElementById('itemImage').value;
+            if (!name || !price || !img) return showAlert('⚠️', 'Incomplete Form', 'Fill Name, Price, and Image Link');
+
+            document.getElementById('draftTitle').innerText = name;
+            document.getElementById('draftPrice').innerText = price;
+            document.getElementById('draftImg').src = img;
+            document.getElementById('draftDiscount').innerText = document.getElementById('itemDiscount').value || 'No Discount';
+            document.getElementById('draftDays').innerText = document.getElementById('itemDays').value;
+            document.getElementById('draftDate').innerText = document.getElementById('itemDate').value;
+            document.getElementById('draftOrderType').innerText = document.getElementById('itemOrderType').value;
+            document.getElementById('draftBox').classList.remove('hidden');
+        }
+
+        function publishItem() {
+            const name = document.getElementById('itemName').value;
+            const price = parseFloat(document.getElementById('itemPrice').value);
+            const img = document.getElementById('itemImage').value;
+            if (!name || !price || !img) return showAlert('⚠️', 'Incomplete Form', 'Fill Name, Price, and Image Link');
+
+            itemsData.unshift({
+                id: Date.now(),
+                storeName: currentStore,
+                category: currentCategory,
+                name: name,
+                price: price,
+                image: img,
+                discount: document.getElementById('itemDiscount').value || 'No Discount',
+                days: document.getElementById('itemDays').value,
+                date: document.getElementById('itemDate').value,
+                orderType: document.getElementById('itemOrderType').value
+            });
+
+            showAlert('🎉', 'Published', 'Item successfully added!');
+            document.getElementById('itemName').value = '';
+            document.getElementById('itemPrice').value = '';
+            document.getElementById('itemImage').value = '';
+            document.getElementById('draftBox').classList.add('hidden');
+            renderTable();
+        }
+
+        function deleteItem(id) {
+            itemsData = itemsData.filter(i => i.id !== id);
+            renderTable();
+        }
+
+        function showAlert(icon, title, msg) {
+            document.getElementById('modalIcon').innerText = icon;
+            document.getElementById('modalTitle').innerText = title;
+            document.getElementById('modalMsg').innerText = msg;
+            document.getElementById('customModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('customModal').classList.add('hidden');
         }
     </script>
 </body>
